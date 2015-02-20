@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BugTracker.Models
 {
-    public class TicketComments
+    public class TicketComment
     {
         public int Id { get; set; }
 
@@ -14,9 +14,9 @@ namespace BugTracker.Models
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTimeOffset CreateDate { get; set; }
         public int TicketId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
-        public virtual Tickets Ticket { get; set; }
-        public virtual Users User { get; set; }
+        public virtual Ticket Ticket { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

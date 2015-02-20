@@ -6,7 +6,7 @@ using System.Web;
 
 namespace BugTracker.Models
 {
-    public class TicketAttachments
+    public class TicketAttachment
     {
         public int Id { get; set; }
 
@@ -15,10 +15,11 @@ namespace BugTracker.Models
         public string Description { get; set; }
         [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTimeOffset CreateDate { get; set; }
-        public int UserId { get; set; }
-        public string fileUrl { get; set; }
+        public string UserId { get; set; }
+        public string FileUrl { get; set; }
 
-        public virtual Tickets TicketId { get; set; }
-        public virtual Users UserId { get; set; }
+        public virtual Ticket Ticket { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
     }
 }

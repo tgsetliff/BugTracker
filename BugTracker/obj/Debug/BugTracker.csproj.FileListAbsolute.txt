@@ -52,6 +52,5 @@ C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\bin\Microsoft.Owin.Security
 C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\obj\Debug\BugTracker.csprojResolveAssemblyReference.cache
 C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\obj\Debug\BugTracker.dll
 C:\Users\Home\Documents\GitHub\BugTracker\BugTracker\obj\Debug\BugTracker.pdb
