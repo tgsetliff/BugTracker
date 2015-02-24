@@ -1,7 +1,43 @@
 ﻿@{
     ViewBag.Title = "About";
 }
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<div class="row">
+    <div class="container pull-left" style="width:300px; height:250px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    <img src="~/Image/dolibarr_bug.png" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container pull-right" style="width:750px; height:250px">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3">
+                    <h1>Bug Tracker</h1>
+                </div>
+                <div class="col-md-6">
+                    <h1><small>Bug Reporting and Tracking System</small></h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p> The Bug Tracker Software Application is a reporting tool for logging application issues. It consists of Projects which
+                encompass all tickets that apply to a specific application or area of an application. </p>
+                <p>Tickets are submitted by users to report one particular problem. Tickets are reviewed by a Project Manager and assigned to a 
+                developer or team of developers to be worked on. The developer or team will be notified when a new ticket has been assigned. 
+                They will investigate the issue by contacting the user to get any specifics necessary to replicate the problem. Once a solution has 
+                been determined, the necessary modifications will be made to the application. Any required testing will be performed to ensure 
+                that the issue does not reoccur.</p>
+                <p> The user will be notified that changes have been made so that they can evaluate the solution and confirm the issue does not
+                continue to exist. Once the user is satisfied that the problem is corrected, they will update the status of the ticket to 
+                Submitter Approved. When this is done,, the Project Manager will be notified that the user has reviewed and approved the changes.
+                The Project Manager will then change the status to PM Approved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+

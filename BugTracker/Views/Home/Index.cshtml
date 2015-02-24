@@ -1,31 +1,100 @@
-﻿@{
+﻿@using BugTracker.Models;
+@using Microsoft.AspNet.Identity
+
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul id="active" class="nav navbar-nav side-nav">
+                <li class="selected"><a href="/RoleManagement/ListRoles"><i class="fa fa-bullseye"></i> Roles</a></li>
+                <li><a href="Account/Register"><i class="fa fa-bullseye"></i> Register</a></li>
+                <li><a href="About"><i class="fa fa-bullseye"></i> About</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right navbar-user">
+                <li class="dropdown messages-dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> Messages <span class="badge">2</span> <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-header">2 New Messages</li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <span class="avatar"><i class="fa fa-bell"></i></span>
+                                <span class="message">Security alert</span>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="message-preview">
+                            <a href="#">
+                                <span class="avatar"><i class="fa fa-bell"></i></span>
+                                <span class="message">Security alert</span>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="#">Go to Inbox <span class="badge">2</span></a></li>
+                    </ul>
+                </li>
+                <li class="divider"></li>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <li class="dropdown user-dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">Name</i><b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
+                            <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
+                            <li class="divider"></li>
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                        </ul>
+                    </li>
+                }
+                else
+                {
+                    <li class="dropdown user-dropdown dropdown-toggle" data-toggle="dropdown">
+                        <i class="fa fa-user"></i>Log In<b class="caret"></b>
+                        @*<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>FirstName LastName<b class="caret"></b></a>*@
+                        <ul class="dropdown-menu">
+                            <li><a href="@Url.Action("Login", "Account", routeValues: new {@returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery})"><i class="fa fa-user"></i> Log In</a></li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
 </div>
-
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    <div id="page-wrapper">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-md-5"></div>
+                <div class="col-md-4">
+                    <h1>Bug Tracker</h1>
+                </div>                
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-6">
+                        <h1><small>Bug Reporting and Tracking System</small></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <h1></h1>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-5"></div>
+                <img src="~/Image/dolibarr_bug.png" />
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+<!-- /#wrapper -->

@@ -49,87 +49,78 @@ namespace BugTracker.Migrations
 
             if (!UserManager.IsInRole(user.Id, "Admin"))
                 UserManager.AddToRole(user.Id, "Admin");
+
+            context.TicketStatuses.AddOrUpdate(
+                p => p.Name,
+            new TicketStatus
+            {
+                Name = "Open"
+            },
+              new TicketStatus
+              {
+                  Name = "Assigned"
+              },
+              new TicketStatus
+              {
+                  Name = "In Process"
+              },
+              new TicketStatus
+              {
+                  Name = "Testing"
+              },
+              new TicketStatus
+              {
+                  Name = "Submitter Approved"
+              },
+              new TicketStatus
+              {
+                  Name = "PM Approved"
+              },
+              new TicketStatus
+              {
+                  Name = "Resolved"
+              }
+              );
+
+             context.TicketPriorities.AddOrUpdate(
+                p => p.Name,
+            new TicketPriority
+            {
+                Name = "Low"
+            },
+              new TicketPriority
+              {
+                  Name = "Medium"
+              },
+              new TicketPriority
+              {
+                  Name = "High"
+              },
+              new TicketPriority
+              {
+                  Name = "Critical"
+              }
+              );
+
+            context.TicketTypes.AddOrUpdate(
+                p => p.Name,
+            new TicketType
+            {
+                Name = "New Function"
+            },
+              new TicketType
+              {
+                  Name = "Enhanced Function"
+              },
+              new TicketType
+              {
+                  Name = "Broke Function"
+              },
+              new TicketType
+              {
+                  Name = "Duplicate Request"
+              }
+              );
         }
-
-        //protected override void Seed(BugTracker.Models.TicketStatusContext context)
-        //{            
-        //    context.TicketStatus.AddOrUpdate(
-        //        p => p.Name,
-        //    new TicketStatuses
-        //    {
-        //        Name = "Open"
-        //    },
-        //      new TicketStatuses
-        //      {
-        //          Name = "Assigned"
-        //      },
-        //      new TicketStatuses
-        //      {
-        //          Name = "In Process"
-        //      },
-        //      new TicketStatuses
-        //      {
-        //          Name = "Testing"
-        //      },
-        //      new TicketStatuses
-        //      {
-        //          Name = "Submitter Approved"
-        //      },
-        //      new TicketStatuses
-        //      {
-        //          Name = "PM Approved"
-        //      },
-        //      new TicketStatuses
-        //      {
-        //          Name = "Resolved"
-        //      }
-        //      );
-        //}
-
-        //protected override void Seed(BugTracker.Models.TicketPriorityContext context)
-        //{
-        //    context.TicketPriority.AddOrUpdate(
-        //        p => p.Name,
-        //    new TicketPriorities
-        //    {
-        //        Name = "Low"
-        //    },
-        //      new TicketPriorities
-        //      {
-        //          Name = "Medium"
-        //      },
-        //      new TicketPriorities
-        //      {
-        //          Name = "High"
-        //      },
-        //      new TicketPriorities
-        //      {
-        //          Name = "Critical"
-        //      }
-        //      );
-        //}
-
-        //protected override void Seed(BugTracker.Models.TicketTypeContext context)
-        //{
-        //    context.TicketType.AddOrUpdate(
-        //        p => p.Name,
-        //    new TicketTypes
-        //    {
-        //        Name = "New Function"
-        //    },
-        //      new TicketTypes
-        //      {
-        //          Name = "Enhanced Function"
-        //      },
-        //      new TicketTypes
-        //      {
-        //          Name = "Broke Function"
-        //      },
-        //      new TicketTypes
-        //      {
-        //          Name = "Duplicate Request"
-        //      }
-        //      );
-        //}
     }
 }

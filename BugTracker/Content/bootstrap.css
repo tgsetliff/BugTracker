@@ -116,7 +116,8 @@ select,
 textarea {
   margin: 0;
   font: inherit;
-  color: inherit;
+  color: #337ab7;
+  background-color:#ddd;
 }
 button {
   overflow: visible;
@@ -1077,8 +1078,8 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.42857143;
-  color: #333;
-  background-color: #fff;
+  color: #ddd;
+  background-color: #000;
 }
 input,
 button,
