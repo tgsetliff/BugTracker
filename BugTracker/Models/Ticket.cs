@@ -31,7 +31,6 @@ namespace BugTracker.Models
         public virtual ApplicationUser OwnerUser { get; set; }
         public virtual ApplicationUser AssignedToUser { get; set; }
 
-
         public virtual ICollection<TicketAttachment> Attachments { get; set; }
         public virtual ICollection<TicketComment> Comments { get; set; }
         public virtual ICollection<TicketHistory> History { get; set; }

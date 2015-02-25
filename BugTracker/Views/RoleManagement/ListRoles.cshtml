@@ -17,9 +17,15 @@
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul id="active" class="nav navbar-nav side-nav">
-                <li class="selected"><a href="RoleManagement/ListRoles"><i class="fa fa-bullseye"></i> Roles</a></li>
-                <li><a href="Account/Register"><i class="fa fa-bullseye"></i> Register</a></li>
-                <li><a href="About"><i class="fa fa-bullseye"></i> About</a></li>
+                <li><a href="/Home/Index"> Home</a></li>
+                <li><a href="/Projects/Index"> Projects</a></li>
+                <li><a href="/Tickets/Index"> Tickets</a></li>
+                <li class="divider"></li>
+                <li class="selected"><a href="#"> Roles</a></li>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <li><a href="Account/Register">Register</a></li>
+                }
             </ul>
             <ul class="nav navbar-nav navbar-right navbar-user">
                 <li class="dropdown messages-dropdown">
