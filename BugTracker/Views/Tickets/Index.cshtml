@@ -27,55 +27,26 @@
                     <li><a href="Account/Register">Register</a></li>
                 }
             </ul>
-            <ul class="nav navbar-nav navbar-right navbar-user">
-                <li class="dropdown messages-dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> Messages <span class="badge">2</span> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-header">2 New Messages</li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>
+                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
                         </li>
-                        <li class="divider"></li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Go to Inbox <span class="badge">2</span></a></li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                     </ul>
-                </li>
-                <li class="divider"></li>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li>
-                        @Html.ActionLink(User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                    </li>
-                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                    @*<li class="dropdown user-dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">Name</i><b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
-                                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
-                                <li class="divider"></li>
-                                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                            </ul>
-                        </li>*@
                 }
-                else
-                {
-                    <li class="dropdown user-dropdown dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-user"></i>Log In<b class="caret"></b>
-                        <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Login", "Account", routeValues: new {@returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery})"><i class="fa fa-user"></i> Log In</a></li>
-                        </ul>
-                    </li>
-                }
-            </ul>
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right navbar-user">
+                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
         </div>
     </nav>
 </div>
@@ -91,79 +62,85 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table" id="TicketDataTable">
-    <tr>
-        
-        <th>
-            <label>Project</label>
-        </th>
-        <th>
-            <label>Ticket</label>
-        </th>
-        <th>
-            <label>Created By</label>
-        </th>
-        <th>
-            <label>Create Date</label>
-        </th>
-        <th>
-            <label>Assigned To</label>
-        </th>
-        <th>
-            <label>Type</label>
-        </th>
-        <th>
-            <label>Priority</label>
-        </th>
-        <th>
-            <label>Status</label>
-        </th>
-        <th>
-           <label>Last Updated</label>
-        </th>
-        <th></th>
-    </tr>
+    <thead>
+        <tr>
+            <th>
+                <label>Project</label>
+            </th>
+            <th>
+                <label>Ticket</label>
+            </th>
+            <th>
+                <label>Created By</label>
+            </th>
+            <th>
+                <label>Create Date</label>
+            </th>
+            <th>
+                <label>Assigned To</label>
+            </th>
+            <th>
+                <label>Type</label>
+            </th>
+            <th>
+                <label>Priority</label>
+            </th>
+            <th>
+                <label>Status</label>
+            </th>
+            <th>
+                <label>Last Updated</label>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Project.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Title)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OwnerUser.FirstName)
-            @Html.DisplayFor(modelItem => item.OwnerUser.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreateDate)
-        </td>
-        <td>
-            @if (item.AssignedToUserId != null)
+    <tbody>
+        @foreach (var item in Model)
+        {
+            var ownerName = item.OwnerUser.FirstName + ' ' + item.OwnerUser.LastName;
+            var assignedName = "";
+            if (item.AssignedToUserId != null)
             {
-                @Html.DisplayFor(modelItem => item.AssignedToUser.FirstName)
-                @Html.DisplayFor(modelItem => item.AssignedToUser.LastName)
-            }            
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TicketType.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.UpdateDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+                assignedName = item.AssignedToUser.FirstName + ' ' + item.AssignedToUser.LastName;
+            }
+                
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Project.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.Raw(ownerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                        @Html.Raw(assignedName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketType.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) 
+                    @*@Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
+                </td>
+            </tr>
 }
+    </tbody>
 
 </table>
 <script>

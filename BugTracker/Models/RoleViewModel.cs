@@ -18,6 +18,7 @@ namespace BugTracker.Models
         [Display(Name = "Role Name")]
         public string RoleName { get; set; }
         public string RoleId { get; set; }
+
         [Display(Name = "Users")]
         public System.Web.Mvc.MultiSelectList Users { get; set; }
         public string[] SelectedUsers { get; set; }

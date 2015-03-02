@@ -1,12 +1,57 @@
-﻿@model BugTracker.Models.Project
-
+﻿@model BugTracker.Models.ProjectUserViewModel
+@using Microsoft.AspNet.Identity;
 @{
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul id="active" class="nav navbar-nav side-nav">
+                <li><a href="/Home/Index"> Home</a></li>
+                <li class="selected"><a href="#"> Projects</a></li>
+                <li><a href="/Tickets/Index"> Tickets</a></li>
+                <li class="divider"></li>
+                <li><a href="/RoleManagement/ListRoles"> Roles</a></li>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <li><a href="Account/Register">Register</a></li>
+                }
+            </ul>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>
+                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                        </li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                    </ul>
+                }
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right navbar-user">
+                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
+        </div>
+    </nav>
+</div>
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("Edit", "Projects", FormMethod.Post,
+    new { encType = "multipart/form-data", name = "myform" }))
 {
     @Html.AntiForgeryToken()
     
@@ -14,19 +59,43 @@
         <h4>Project</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
+        @Html.HiddenFor(model => model.ProjectId)
+        @Html.HiddenFor(model => model.ProjectName)
         <div class="form-group">
-            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled"} })
+                @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
             </div>
         </div>
+        <div class="form-group">
+            
+            
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.AssignedUsers, htmlAttributes: new { @class = "control-label col-md-3" })
+                @Html.ListBoxFor(model => model.AssignedUsers, Model.AssignedUsers as MultiSelectList, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.AssignedUsers, "", new { @class = "text-danger" })
+                @if (ViewBag.Message != null)
+                    {
+                    <br />
+                    <div class="text-danger">@ViewBag.Message</div>
+                    }
+            </div>
+            <div class="col-md-4">
+                @Html.LabelFor(model => model.UnAssignedUsers, htmlAttributes: new { @class = "control-label col-md-4" })
+                @Html.ListBoxFor(model => model.UnAssignedUsers, Model.UnAssignedUsers as MultiSelectList, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.UnAssignedUsers, "", new { @class = "text-danger" })
+                @if (ViewBag.Message != null)
+                {
+                    <br />
+                    <div class="text-danger">@ViewBag.Message</div>
+                }
+            </div>
 
+        </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Submit" class="btn btn-default" />
             </div>
         </div>
     </div>

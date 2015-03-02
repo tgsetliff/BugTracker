@@ -1,4 +1,5 @@
 ﻿@model BugTracker.Models.UserRoleViewModel
+@using Microsoft.AspNet.Identity;
 @{
     ViewBag.Title = "UnassignUserRole";
 }
@@ -15,63 +16,39 @@
         </div>
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul id="active" class="nav navbar-nav side-nav">
-                <li class="selected"><a href="RoleManagement/ListRoles"><i class="fa fa-bullseye"></i> Roles</a></li>
-                <li><a href="Account/Register"><i class="fa fa-bullseye"></i> Register</a></li>
-                <li><a href="About"><i class="fa fa-bullseye"></i> About</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right navbar-user">
-                <li class="dropdown messages-dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> Messages <span class="badge">2</span> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-header">2 New Messages</li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Go to Inbox <span class="badge">2</span></a></li>
-                    </ul>
-                </li>
+                <li><a href="/Home/Index"> Home</a></li>
+                <li><a href="/Projects/Index"> Projects</a></li>
+                <li><a href="/Tickets/Index"> Tickets</a></li>
                 <li class="divider"></li>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li class="dropdown user-dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">Name</i><b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
-                            <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
-                            <li class="divider"></li>
-                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                        </ul>
-                    </li>
-                }
-                else
-                {
-                    <li class="dropdown user-dropdown dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-user"></i>Log In<b class="caret"></b>
-                        @*<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>FirstName LastName<b class="caret"></b></a>*@
-                        <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Login", "Account", routeValues: new {@returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery})"><i class="fa fa-user"></i> Log In</a></li>
-                        </ul>
-                    </li>
-                }
+                <li class="selected"><a href="#"> Roles</a></li>
             </ul>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>
+                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                        </li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                    </ul>
+                }
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right navbar-user">
+                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
         </div>
     </nav>
 </div>
 <div id="page-wrapper">
     <div class="col-lg-12">
         <div class="col-lg-6">
-            <h2>UnAssign @(Model.RoleName + "s")</h2>
+            <h2>Unassign @(Model.RoleName + "s")</h2>
         </div>
     </div>
     @using (Html.BeginForm("UnassignUserRole", "RoleManagement", FormMethod.Post,

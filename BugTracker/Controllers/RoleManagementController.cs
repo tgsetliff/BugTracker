@@ -50,19 +50,19 @@ namespace BugTracker.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult AssignUserRole(string roleName)
         {
-            //Code to assign users to the given role
+            //Code to assign users to a project
             ViewBag.Message = (string)TempData["ListError"];
 
             var model = db.Roles
-                          .Where(m => m.Name == roleName)
-                          .Select(m => new UserRoleViewModel { RoleId = m.Id, RoleName = m.Name })
-                          .FirstOrDefault();
+                .Where(m => m.Name == roleName)
+                .Select(m => new UserRoleViewModel { RoleId = m.Id, RoleName = m.Name })
+                .FirstOrDefault();
 
             var userList = db.Users
-                             .Include("Roles")
-                             .Where(m => !(m.Roles.Any(r => r.RoleId == model.RoleId)))
-                             .OrderBy(u => u.UserName)
-                             .ToList();
+                .Include("Roles")
+                .Where(m => !(m.Roles.Any(r => r.RoleId == model.RoleId)))
+                .OrderBy(u => u.UserName)
+                .ToList();
 
             model.Users = new MultiSelectList(userList, "Id", "UserName");
 

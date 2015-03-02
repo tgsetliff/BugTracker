@@ -1,5 +1,7 @@
-﻿@model IEnumerable<BugTracker.Models.Project>
+﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
+
+@model IEnumerable<ProjectViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -27,81 +29,53 @@
                     <li><a href="Account/Register">Register</a></li>
                 }
             </ul>
-            <ul class="nav navbar-nav navbar-right navbar-user">
-                <li class="dropdown messages-dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-envelope"></i> Messages <span class="badge">2</span> <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-header">2 New Messages</li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>
+                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
                         </li>
-                        <li class="divider"></li>
-                        <li class="message-preview">
-                            <a href="#">
-                                <span class="avatar"><i class="fa fa-bell"></i></span>
-                                <span class="message">Security alert</span>
-                            </a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#">Go to Inbox <span class="badge">2</span></a></li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
                     </ul>
-                </li>
-                <li class="divider"></li>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li>
-                        @Html.ActionLink(User.Identity.GetUserName(), "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                    </li>
-                    <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                    @*<li class="dropdown user-dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user">Name</i><b class="caret"></b></a>
-                            <ul class="dropdown-menu">
-                                <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
-                                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
-                                <li class="divider"></li>
-                                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                            </ul>
-                        </li>*@
                 }
-                else
-                {
-                    <li class="dropdown user-dropdown dropdown-toggle" data-toggle="dropdown">
-                        <i class="fa fa-user"></i>Log In<b class="caret"></b>
-                        <ul class="dropdown-menu">
-                            <li><a href="@Url.Action("Login", "Account", routeValues: new {@returnUrl = ViewContext.HttpContext.Request.Url.PathAndQuery})"><i class="fa fa-user"></i> Log In</a></li>
-                        </ul>
-                    </li>
-                }
-            </ul>
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right navbar-user">
+                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
         </div>
     </nav>
 </div>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th></th>
-    </tr>
+<div id="page-wrapper">
+    <div class="col-lg-12">
+        <div class="col-lg-6">
+            <h2>Projects</h2>
+        </div>
+    </div>
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+         @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProjectName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ProjectId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ProjectId }) 
+                    @*@Html.ActionLink("Delete", "Delete", new { id = item.ProjectId })*@
+                </td>
+            </tr>
+        }
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.Name)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    </table>
 
-</table>
-
+</div>

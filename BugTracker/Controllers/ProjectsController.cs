@@ -17,7 +17,12 @@ namespace BugTracker.Controllers
         // GET: Projects
         public ActionResult Index()
         {
-            return View(db.Project.ToList());
+            var db = new ApplicationDbContext();
+            var model = db.Project
+                .Select(m => new ProjectViewModel() { ProjectId = m.Id, ProjectName = m.Name })
+                .ToList();
+
+            return View(model);           
         }
 
         // GET: Projects/Details/5
@@ -32,10 +37,27 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(project);
+            //return View(project);
+            var model = db.Project
+                .Where(m => m.Id == id)
+                .Select(m => new ProjectUserViewModel { ProjectId = m.Id, ProjectName = m.Name })
+                .FirstOrDefault();
+
+
+            // build list of users assigned to project
+            var assignedProjectUserList = db.Users
+                .Include("Projects")
+                .Where(m => m.Projects.Any(p => p.Id == model.ProjectId))
+                .OrderBy(u => u.UserName)
+                .ToList();
+
+            model.AssignedUsers = new MultiSelectList(assignedProjectUserList, "Id", "UserName");
+
+            return View(model);
         }
 
         // GET: Projects/Create
+        [Authorize(Roles="Admin")]
         public ActionResult Create()
         {
             return View();
@@ -59,6 +81,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Edit/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -70,7 +93,33 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            return View(project);
+
+            //Code to assign users to a project
+            ViewBag.Message = (string)TempData["ListError"];
+
+            var model = db.Project
+                .Where(m => m.Id == id)
+                .Select(m => new ProjectUserViewModel { ProjectId = m.Id, ProjectName = m.Name })
+                .FirstOrDefault();
+
+            
+            // build list of users assigned to project
+            var assignedProjectUserList = db.Users
+                .Include("Projects")
+                .Where(m => m.Projects.Any(p => p.Id == model.ProjectId))
+                .OrderBy(u => u.UserName)
+                .ToList();
+
+            // build list of users not assigned to project
+            var unassignedProjectUserList = db.Users
+                .Include("Projects")
+                .Where(m => !(m.Projects.Any(p => p.Id == model.ProjectId)))
+                .ToList();
+            
+            model.AssignedUsers = new MultiSelectList(assignedProjectUserList, "Id", "UserName");
+            model.UnAssignedUsers = new MultiSelectList(unassignedProjectUserList, "Id", "UserName");
+
+            return View(model);
         }
 
         // POST: Projects/Edit/5
@@ -78,15 +127,48 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Name")] Project project)
+        public ActionResult Edit(ProjectUserViewModel model)
         {
+            var db = new ApplicationDbContext();
+       
+            // check the model state - if it's valid, continue, 
+            //  if not, return the view with the current model
             if (ModelState.IsValid)
             {
-                db.Entry(project).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                // check the UsersIn attribute of the model - if it's NOT null, continue
+                
+                
+                if(model.UsersIn != null)
+                {
+                    foreach(string userid in model.UsersIn)
+                    {
+                        // need to remove users from the Project Users table here
+                        
+                    }
+                }
+                if (model.UsersOut != null)
+                {
+                    // process UsersOut and add selsected
+                    foreach (string userid in model.UsersOut)
+                    {
+                        // need to add users to the Project Users table
+                    }
+                    // we've succeeded - go back to the roles list view
+                    return RedirectToAction("ListRoles");
+                }
+                
+                if(model.UsersIn == null && model.UsersOut == null)
+                {
+                    TempData["ListError"] = "You must select at least one user from the list.";
+                    return RedirectToAction("Edit", "Projects", new { projectid = model.ProjectId });
+                }
+                else
+                {
+                    return RedirectToAction("Index");
+                }
             }
-            return View(project);
+            // if we get to this point, there's a problem - return the view with the model
+            return View(model);
         }
 
         // GET: Projects/Delete/5
