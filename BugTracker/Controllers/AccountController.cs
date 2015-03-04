@@ -390,7 +390,9 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
+        
         {
+            Session.Clear();
             AuthenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }

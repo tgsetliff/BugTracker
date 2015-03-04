@@ -101,7 +101,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,UpdateDate,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,Description,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -109,6 +109,8 @@ namespace BugTracker.Controllers
                 ticket.AssignedToUserId = User.Identity.GetUserId();
 
                 db.Entry(ticket).State = EntityState.Modified;
+                db.Entry(ticket).Property(p => p.OwnerUserId).IsModified = false;
+                db.Entry(ticket).Property(p=> p.CreateDate).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

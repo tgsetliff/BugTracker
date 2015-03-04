@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity;
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
@@ -8,11 +9,6 @@
     <meta name="description" content="Bug Tracker Project">
     <meta name="author" content="Tom Setliff">
 
-    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="/font-awesome/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="/css/local.css" />
-    <link rel="stylesheet" type="text/css" href="/DataTables-1.10.5/media/css/jquery.dataTables.css">
-
      @*you need to include the shieldui css and js assets in order for the charts to work 
     <link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/shieldui-all.min.css" />
     <link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/light-bootstrap/all.min.css" />
@@ -21,20 +17,75 @@
     <script type="text/javascript" src="http://www.prepbootstrap.com/Content/js/gridData.js"></script>
 
     @Styles.Render("~/Content/css")
-    <script src="/Scripts/jquery-2.1.3.min.js"></script>
-    <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script> 
-    <script type="text/javascript" charset="utf8" src="/DataTables-1.10.5/media/js/jquery.js"></script>
-    <script type="text/javascript" charset="utf8" src="/DataTables-1.10.5/media/js/jquery.dataTables.js"></script>
     @Scripts.Render("~/bundles/modernizr")
-
+    <link href="/Content/local.css" rel="stylesheet" />
 </head>
 <body>   
-    <div class="container body-content">
-        @RenderBody()        
+    <div class="wrapper">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul id="active" class="nav navbar-nav side-nav">
+                    <li @if (ViewBag.Title.Contains("Home")) { <text> class="selected" </text>   }><a href="/Home/Index"> Home</a></li>
+                    <li @if (ViewBag.Title.Contains("Project")) { <text> class="selected" </text>  }><a href="/Projects/Index"> Projects</a></li>
+                    <li @if (ViewBag.Title.Contains("Ticket")) { <text> class="selected" </text>   }><a href="/Tickets/Index"> Tickets</a></li>
+                    <li class="divider"></li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li @if (ViewBag.Title.Contains("Role")) { <text> class="selected" </text>    }><a href="/RoleManagement/ListRoles"> Roles</a></li>
+                    }
+                    
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <li><a href="Account/Register">Register</a></li>
+                    }
+                </ul>
+                @if (Request.IsAuthenticated)
+                {
+                    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <ul class="nav navbar-nav navbar-right navbar-user">
+                            <li>
+                                @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                            </li>
+                            <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                        </ul>
+                    }
+                }
+                else
+                {
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                        <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                    </ul>
+                }
+            </div>
+        </nav>
+        <div id="page-wrapper">
+            @RenderBody()
+            
+        </div>        
         <footer>
-            <hr />
-            <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+            <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-10">
+                    <hr />
+                    <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+                </div>
+                
+            </div>
+            
         </footer>
+
+        
     </div>
 
     @Scripts.Render("~/bundles/jquery")

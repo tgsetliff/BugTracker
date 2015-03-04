@@ -1,0 +1,122 @@
+﻿@model BugTracker.Models.Ticket
+@using Microsoft.AspNet.Identity;
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div id="wrapper">
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul id="active" class="nav navbar-nav side-nav">
+                <li><a href="/Home/Index"> Home</a></li>
+                <li><a href="/Projects/Index"> Projects</a></li>
+                <li class="selected"><a href="#"> Tickets</a></li>
+                <li class="divider"></li>
+                <li><a href="/RoleManagement/ListRoles"> Roles</a></li>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <li><a href="Account/Register">Register</a></li>
+                }
+            </ul>
+            @if (Request.IsAuthenticated)
+            {
+                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <ul class="nav navbar-nav navbar-right navbar-user">
+                        <li>
+                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+                        </li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                    </ul>
+                }
+            }
+            else
+            {
+                <ul class="nav navbar-nav navbar-right navbar-user">
+                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
+                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+                </ul>
+            }
+        </div>
+    </nav>
+</div>
+
+<div id="page-wrapper">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>@Html.DisplayFor(model => model.Title)</h2>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+            @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
+            <div class="col-md-4">
+                @Html.Label("Created By:")
+                @Html.Raw(ownerName)
+            </div>
+            <div class="col-md-2">
+                @Html.DisplayFor(model => model.CreateDate)
+            </div>
+            <div class="col-md-4">
+                @{var assignedName = "";
+                if (Model.AssignedToUserId != null)
+                {
+                    assignedName = Model.AssignedToUser.FirstName + ' ' + Model.AssignedToUser.LastName;
+                }
+                }
+                @Html.Label("Assigned To:")
+                @Html.Raw(assignedName)
+            </div>
+            <div class="col-md-2">
+                @Html.Label("Status:")
+                @Html.DisplayFor(model => model.TicketStatus.Name)
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <hr />
+    </div>
+
+    <div class="col-md-12">
+        <div class="col-md-4">
+            @Html.Label("Project:")
+            @Html.DisplayFor(model => model.Project.Name)
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Priority:")
+            @Html.DisplayFor(model => model.TicketPriority.Name)
+        </div>
+        <div class="col-md-4">
+            @Html.Label("Type:")
+            @Html.DisplayFor(model => model.TicketType.Name)
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        @Html.DisplayFor(model => model.Description)
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-3">
+                <p>
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+                    @Html.ActionLink("Back to List", "Index")
+                </p>
+            </div>
+        </div>        
+    </div>
+    
+</div>
+

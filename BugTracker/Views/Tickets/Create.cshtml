@@ -1,67 +1,22 @@
 ﻿@model BugTracker.Models.Ticket
 @using Microsoft.AspNet.Identity;
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Ticket Create";
 }
 
-<div id="wrapper">
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul id="active" class="nav navbar-nav side-nav">
-                <li><a href="/Home/Index"> Home</a></li>
-                <li><a href="/Projects/Index"> Projects</a></li>
-                <li class="selected"><a href="#"> Tickets</a></li>
-                @if (User.IsInRole("Admin"))
-                {
-                    <li><a href="/RoleManagement/ListRoles"> Roles</a></li>
-                }
-            </ul>
 
-            @if (Request.IsAuthenticated)
-            {
-                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <ul class="nav navbar-nav navbar-right navbar-user">
-                        <li>
-                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                        </li>
-                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                    </ul>
-                }
-            }
-            else
-            {
-                <ul class="nav navbar-nav navbar-right navbar-user">
-                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-                </ul>
-            }
-        </div>
-    </nav>
-</div>
-
-<div id="page-wrapper">
     @using (Html.BeginForm())
     {
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <h4>New Ticket</h4>
+            <h2>New Ticket</h2>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
             <div class="form-group">
                 @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", autofocus="autofocus" } })
                     @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -69,7 +24,8 @@
             <div class="form-group">
                 @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    <textarea name="Description" autofocus></textarea>
+                    @*@Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })*@
                     @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                 </div>
             </div>
@@ -91,7 +47,7 @@
                 </div>*@
 
             <div class="form-group">
-                @Html.LabelFor(model => model.ProjectId, "ProjectId", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.Label("Project", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
@@ -99,7 +55,7 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.TicketTypeId, "TicketTypeId", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownList("TicketTypeId", null, htmlAttributes: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.TicketTypeId, "", new { @class = "text-danger" })
@@ -107,7 +63,7 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.TicketPriorityId, "TicketPriorityId", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.Label("Priority", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownList("TicketPriorityId", null, htmlAttributes: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.TicketPriorityId, "", new { @class = "text-danger" })
@@ -115,7 +71,7 @@
             </div>
 
             <div class="form-group">
-                @Html.LabelFor(model => model.TicketStatusId, "TicketStatusId", htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.Label("Status", htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
                     @Html.DropDownList("TicketStatusId", null, htmlAttributes: new { @class = "form-control" })
                     @Html.ValidationMessageFor(model => model.TicketStatusId, "", new { @class = "text-danger" })
@@ -145,7 +101,7 @@
             </div>
         </div>
     }
-</div>
+
     <div>
         @Html.ActionLink("Back to List", "Index")
     </div>

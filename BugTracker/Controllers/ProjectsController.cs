@@ -57,10 +57,19 @@ namespace BugTracker.Controllers
         }
 
         // GET: Projects/Create
-        [Authorize(Roles="Admin")]
+        [Authorize(Roles = "Admin, PM")]
         public ActionResult Create()
         {
-            return View();
+            var model = new CreateProjectUserViewModel();
+
+            // build list of users not assigned to project
+            var unassignedProjectUserList = db.Users
+                .ToList();
+
+            
+            model.UnAssignedUsers = new MultiSelectList(unassignedProjectUserList, "Id", "UserName");
+
+            return View(model);
         }
 
         // POST: Projects/Create
@@ -68,20 +77,61 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name")] Project project)
+        public ActionResult Create(CreateProjectUserViewModel model)
         {
+
             if (ModelState.IsValid)
             {
+                var project = new Project { Name = model.ProjectName };
                 db.Project.Add(project);
+
+                // check the UsersIn attribute of the model - if it's NOT null, continue
+                if (model.UsersIn != null)
+                {
+                    foreach (string userid in model.UsersIn)
+                    {
+                        // need to remove users from the Project Users table here
+                        var tempUser = new ApplicationUser { Id = userid };
+                        db.Users.Attach(tempUser);
+                        project.AssignedUsers.Add(tempUser);
+                    }
+                }
+               
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(project);
+            return View(model);
         }
 
+
+        // OLD CREATE - HOLD TIL OTHER IS WORKING
+        //// GET: Projects/Create
+        //[Authorize(Roles="Admin, PM")]
+        //public ActionResult Create()
+        //{
+        //    return View();
+        //}
+
+        //// POST: Projects/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Create([Bind(Include = "Id,Name")] Project project)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        db.Project.Add(project);
+        //        db.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+
+        //    return View(project);
+        //}
+
         // GET: Projects/Edit/5
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, PM")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +144,6 @@ namespace BugTracker.Controllers
                 return HttpNotFound();
             }
 
-            //Code to assign users to a project
             ViewBag.Message = (string)TempData["ListError"];
 
             var model = db.Project
@@ -113,7 +162,7 @@ namespace BugTracker.Controllers
             // build list of users not assigned to project
             var unassignedProjectUserList = db.Users
                 .Include("Projects")
-                .Where(m => !(m.Projects.Any(p => p.Id == model.ProjectId)))
+                .Where(m => !(m.Projects.Any(p => p.Id == model.ProjectId))) 
                 .ToList();
             
             model.AssignedUsers = new MultiSelectList(assignedProjectUserList, "Id", "UserName");
@@ -129,21 +178,23 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ProjectUserViewModel model)
         {
-            var db = new ApplicationDbContext();
-       
+            var project = db.Project.Find(model.ProjectId);
+            if (project == null)
+                return HttpNotFound();
+
             // check the model state - if it's valid, continue, 
             //  if not, return the view with the current model
             if (ModelState.IsValid)
             {
                 // check the UsersIn attribute of the model - if it's NOT null, continue
-                
-                
                 if(model.UsersIn != null)
                 {
                     foreach(string userid in model.UsersIn)
                     {
                         // need to remove users from the Project Users table here
-                        
+                        var tempUser = new ApplicationUser { Id = userid };
+                        db.Users.Attach(tempUser);
+                        project.AssignedUsers.Add(tempUser);
                     }
                 }
                 if (model.UsersOut != null)
@@ -151,21 +202,18 @@ namespace BugTracker.Controllers
                     // process UsersOut and add selsected
                     foreach (string userid in model.UsersOut)
                     {
-                        // need to add users to the Project Users table
+                        var tempUser = new ApplicationUser { Id = userid };
+                        db.Users.Attach(tempUser);
+                        project.AssignedUsers.Remove(tempUser);
                     }
-                    // we've succeeded - go back to the roles list view
-                    return RedirectToAction("ListRoles");
                 }
                 
-                if(model.UsersIn == null && model.UsersOut == null)
-                {
-                    TempData["ListError"] = "You must select at least one user from the list.";
-                    return RedirectToAction("Edit", "Projects", new { projectid = model.ProjectId });
-                }
-                else
-                {
-                    return RedirectToAction("Index");
-                }
+                db.Entry(project).State = EntityState.Modified;
+
+                project.Name = model.ProjectName;
+                db.SaveChanges();
+                return RedirectToAction("Index");
+
             }
             // if we get to this point, there's a problem - return the view with the model
             return View(model);
