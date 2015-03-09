@@ -9,11 +9,10 @@
     <meta name="description" content="Bug Tracker Project">
     <meta name="author" content="Tom Setliff">
 
-     @*you need to include the shieldui css and js assets in order for the charts to work 
-    <link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/shieldui-all.min.css" />
-    <link rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/light-bootstrap/all.min.css" />
-    <link id="gridcss" rel="stylesheet" type="text/css" href="http://www.shieldui.com/shared/components/latest/css/dark-bootstrap/all.min.css" />
-    <script type="text/javascript" src="http://www.shieldui.com/shared/components/latest/js/shieldui-all.min.js"></script>*@
+    <link href="/Content/jquery.dataTables.css" rel="stylesheet" />
+
+    <script src="/Scripts/jquery.js"></script>
+    <script src="/Scripts/jquery.dataTables.js"></script>
     <script type="text/javascript" src="http://www.prepbootstrap.com/Content/js/gridData.js"></script>
 
     @Styles.Render("~/Content/css")
@@ -74,15 +73,15 @@
             
         </div>        
         <footer>
-            <div class="col-md-12">
-                <div class="col-md-2"></div>
-                <div class="col-md-10">
-                    <hr />
-                    <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="col-md-2"></div>
+                    <div class="col-md-10">
+                        <hr />
+                        <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+                    </div>
                 </div>
-                
-            </div>
-            
+            </div>            
         </footer>
 
         

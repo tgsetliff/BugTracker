@@ -20,8 +20,38 @@ namespace BugTracker.Controllers
         // GET: Tickets
         public ActionResult Index()
         {
-            var tickets = db.Tickets.Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+ 
+            //// if PM, then show tickets in projects they are assigned
+            //if (User.IsInRole("PM"))
+            //{
+            //    var tickets = db.Tickets
+            //        .Include("Users")
+            //        .Where(p => (p. == User.Identity.GetUserId() || p.OwnerUserId == User.Identity.GetUserId()))
+            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+            //}
+
+            //// if developer, then show tickets they are assigned or they own
+            //if (User.IsInRole("Developer"))
+            //{
+            //    var tickets = db.Tickets
+            //        .Where(p => (p.AssignedToUserId == User.Identity.GetUserId() || p.OwnerUserId == User.Identity.GetUserId()))
+            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+            //}
+
+            //// if submitter, then show tickets in projects they are assigned
+            //if (User.IsInRole("Submitter"))
+            //{
+            //    var tickets = db.Tickets
+            //        .Where(p => (p.OwnerUserId == User.Identity.GetUserId()))
+            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
+            //}
+
+            // build list of tickets to be displayed
+            // If admin, see all
+            var tickets = db.Tickets
+                .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(tickets.ToList());
+            
         }
 
         // GET: Tickets/Details/5
@@ -86,8 +116,7 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-
-            var assignedUser = 
+ 
             ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
@@ -106,11 +135,12 @@ namespace BugTracker.Controllers
             if (ModelState.IsValid)
             {
                 ticket.UpdateDate = DateTimeOffset.UtcNow;
-                ticket.AssignedToUserId = User.Identity.GetUserId();
+                //ticket.AssignedToUserId = User.Identity.GetUserId();
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.Entry(ticket).Property(p => p.OwnerUserId).IsModified = false;
                 db.Entry(ticket).Property(p=> p.CreateDate).IsModified = false;
+                db.Entry(ticket).Property(p => p.Title).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }

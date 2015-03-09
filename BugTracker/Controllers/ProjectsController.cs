@@ -65,7 +65,6 @@ namespace BugTracker.Controllers
             // build list of users not assigned to project
             var unassignedProjectUserList = db.Users
                 .ToList();
-
             
             model.UnAssignedUsers = new MultiSelectList(unassignedProjectUserList, "Id", "UserName");
 
@@ -103,32 +102,6 @@ namespace BugTracker.Controllers
 
             return View(model);
         }
-
-
-        // OLD CREATE - HOLD TIL OTHER IS WORKING
-        //// GET: Projects/Create
-        //[Authorize(Roles="Admin, PM")]
-        //public ActionResult Create()
-        //{
-        //    return View();
-        //}
-
-        //// POST: Projects/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Create([Bind(Include = "Id,Name")] Project project)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        db.Project.Add(project);
-        //        db.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-
-        //    return View(project);
-        //}
 
         // GET: Projects/Edit/5
         [Authorize(Roles = "Admin, PM")]

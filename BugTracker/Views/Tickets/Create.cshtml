@@ -5,7 +5,8 @@
 }
 
 
-    @using (Html.BeginForm())
+    @using (Html.BeginForm("Create", "Tickets", FormMethod.Post,
+    new { encType = "multipart/form-data", name = "myform" }))
     {
         @Html.AntiForgeryToken()
 

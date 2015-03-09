@@ -165,7 +165,8 @@ legend {
   padding: 0;
 }
 textarea {
-    width:300px;
+    width:600px;
+    max-width:650px;
     background-color: white;
   overflow: auto;
 }
@@ -1396,13 +1397,13 @@ pre code {
 }
 table {
   max-width: 100%;
-  background-color: #222222;
+  background-color: white;
 }
 th {
   text-align: left;
 }
 .table {
-  width: 85%;
+  /*width: inherit;*/
   margin-bottom: 20px;
 }
 .table > thead > tr > th,
@@ -1667,6 +1668,7 @@ input[type="range"] {
 select[multiple],
 select[size] {
   height: auto;
+  background-color:white;
 }
 input[type="file"]:focus,
 input[type="radio"]:focus,
@@ -1684,7 +1686,7 @@ output {
 }
 .form-control {
   display: block;
-  width: 100%;
+  width: 85%;
   height: 38px;
   padding: 8px 12px;
   font-size: 14px;
@@ -1977,7 +1979,7 @@ select[multiple].input-lg {
 }
 @media (min-width: 768px) {
   .form-horizontal .control-label {
-    text-align: right;
+    text-align: left;
   }
 }
 .form-horizontal .has-feedback .form-control-feedback {
@@ -4755,6 +4757,7 @@ a.list-group-item-danger.active:focus {
 }
 .panel-body {
   padding: 15px;
+  background-color:white;
 }
 .panel-heading {
   padding: 10px 15px;
@@ -4768,18 +4771,21 @@ a.list-group-item-danger.active:focus {
 .panel-title {
   margin-top: 0;
   margin-bottom: 0;
+  height: 30px;
   font-size: 16px;
   color: inherit;
+  background-color:#95B1CB
 }
 .panel-title > a {
   color: inherit;
 }
 .panel-footer {
   padding: 10px 15px;
-  background-color: #3c3c3c;
-  border-top: 1px solid #282828;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 3px;
+  background-color: white;
+  height:auto
+  /*border-top: 0px solid #282828;*/
+  /*border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;*/
 }
 .panel > .list-group {
   margin-bottom: 0;
@@ -5718,11 +5724,11 @@ button.close {
 }
 table,
 .table {
-  color: #fff;
+  color: #222222;
 }
 table a,
 .table a {
-  color: #fff;
+  color: #4c4848;
   text-decoration: underline;
 }
 .table-responsive > .table {
@@ -5947,7 +5953,7 @@ table.tablesorter thead tr th:hover {
 
   #page-wrapper {
 	padding: 15px 25px;
-    margin-left: 225px;
+    margin-left: 185px;
   }
 
   /* Side Nav */
@@ -5955,7 +5961,7 @@ table.tablesorter thead tr th:hover {
   .side-nav {
 	margin-left: 0;
     left: 0px;
-	width: 200px;
+	width: 150px;
 	position: fixed;
 	top: 50px;
 	height: 100%;
