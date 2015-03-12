@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MvcTables.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -16,6 +17,8 @@ namespace BugTracker
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            ConfigureMvcTables.InTheSameAssembly.As<MvcApplication>();
         }
     }
 }

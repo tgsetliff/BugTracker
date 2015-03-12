@@ -8,6 +8,9 @@ using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
 using Microsoft.AspNet.Identity;
+using System.Configuration;
+using SendGrid;
+using System.Net.Mail;
 
 namespace BugTracker.Controllers
 {
@@ -117,6 +120,8 @@ namespace BugTracker.Controllers
                 return HttpNotFound();
             }
  
+            TempData["Ticket"] = ticket;
+
             ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
@@ -130,17 +135,134 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Description,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket)
+        public ActionResult Edit([Bind(Include = "Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,AssignedToUserId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
+                // need to check tempdata against incoming fields. If changes occured, then create history record
+                if(TempData["Ticket"] != null)
+                { 
+                    Ticket getTicketHistory = (Ticket)TempData["Ticket"];
+                    var userId = User.Identity.GetUserId();
+                    var assignedUser = db.Users.FirstOrDefault(u => u.Id == ticket.AssignedToUserId).Email;
+
+                    // check description
+                    if(getTicketHistory.Description != ticket.Description)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Description",
+                            OldValue = getTicketHistory.Description,
+                            NewValue = ticket.Description,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+
+                    }
+
+                    // check title
+                    if (getTicketHistory.Title != ticket.Title)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Title",
+                            OldValue = getTicketHistory.Title,
+                            NewValue = ticket.Title,
+                            TicketId = ticket.Id,
+                            UserId = userId
+
+                        });
+                    }
+
+                    // check project id
+                    if (getTicketHistory.ProjectId != ticket.ProjectId)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Project",
+                            OldValue = getTicketHistory.Project.Name,
+                            NewValue = db.Project.FirstOrDefault(p => p.Id == ticket.ProjectId).Name,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+                    }
+
+                    // check status id
+                    if (getTicketHistory.TicketStatusId != ticket.TicketStatusId)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Status",
+                            OldValue = getTicketHistory.TicketStatus.Name,
+                            NewValue = db.TicketStatuses.FirstOrDefault(p => p.Id == ticket.TicketStatusId).Name,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+                    }
+
+                    // check status id
+                    if (getTicketHistory.TicketTypeId != ticket.TicketTypeId)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Type",
+                            OldValue = getTicketHistory.TicketType.Name,
+                            NewValue = db.TicketTypes.FirstOrDefault(p => p.Id == ticket.TicketTypeId).Name,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+                    }
+
+                    // check priority id
+                    if (getTicketHistory.TicketPriorityId != ticket.TicketPriorityId)
+                    {
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Priority",
+                            OldValue = getTicketHistory.TicketPriority.Name,
+                            NewValue = db.TicketPriorities.FirstOrDefault(p => p.Id == ticket.TicketPriorityId).Name,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+                    }               
+
+                    // check assigned to user, if changed, notify new asignee
+                    if (getTicketHistory.AssignedToUserId != ticket.AssignedToUserId)
+                    {
+                        var MyAddress = ConfigurationManager.AppSettings["ContactEmail"];
+                        var MyUsername = ConfigurationManager.AppSettings["Username"];
+                        var MyPassword = ConfigurationManager.AppSettings["Password"];
+                        var link = HttpContext.Request.Url.Scheme + "://" + HttpContext.Request.Url.Authority + Url.Action("Details", "Tickets", new { id = ticket.Id });
+
+                        SendGridMessage mail = new SendGridMessage();
+                        mail.From = new MailAddress("noreply@bugtracker.com");
+                        mail.AddTo(assignedUser);
+                        mail.Subject = "New Ticket Assignment for ticket: " + ticket.Title;
+                        mail.Text = "You have been assigned a new Ticket. Please review at your earliest opportunity.  " + link;
+                        var credentials = new NetworkCredential(MyUsername, MyPassword);
+                        var transportWeb = new Web(credentials);
+                        transportWeb.Deliver(mail);
+
+                        db.TicketNotifications.Add(new TicketNotification
+                        {
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+                    }
+                }               
+
                 ticket.UpdateDate = DateTimeOffset.UtcNow;
                 //ticket.AssignedToUserId = User.Identity.GetUserId();
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.Entry(ticket).Property(p => p.OwnerUserId).IsModified = false;
                 db.Entry(ticket).Property(p=> p.CreateDate).IsModified = false;
-                db.Entry(ticket).Property(p => p.Title).IsModified = false;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -176,6 +298,25 @@ namespace BugTracker.Controllers
             db.Tickets.Remove(ticket);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+        // add a comment
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Comment([Bind(Include = "TicketId, Comment")] string Slug, TicketComment ticketComment)
+        {
+            if (ModelState.IsValid)
+            {
+                if (ticketComment.Comment != null)
+                {
+                    ticketComment.UserId = User.Identity.GetUserId();
+                    ticketComment.CreateDate = DateTimeOffset.UtcNow;
+                    db.TicketComments.Add(ticketComment);
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Details", new { id = ticketComment.Id });
         }
 
         protected override void Dispose(bool disposing)

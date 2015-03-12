@@ -7,6 +7,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BugTracker.Models;
+using Microsoft.AspNet.Identity;
+using System.IO;
 
 namespace BugTracker.Controllers
 {
@@ -37,11 +39,15 @@ namespace BugTracker.Controllers
         }
 
         // GET: TicketAttachments/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
         {
-            //ViewBag.TicketId = new SelectList(db.Tickets, "Id", "Title");
-            //ViewBag.UserId = new SelectList(db.ApplicationUsers, "Id", "FirstName");
-            return View();
+            TicketAttachment ticketAttachment = new TicketAttachment();
+
+            ticketAttachment.Ticket = db.Tickets.FirstOrDefault(t => t.Id == id);
+            ticketAttachment.TicketId = id;
+            ticketAttachment.UserId = User.Identity.GetUserId();
+
+            return View(ticketAttachment);
         }
 
         // POST: TicketAttachments/Create
@@ -49,17 +55,55 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,TicketId,FilePath,Description,CreateDate,UserId,FileUrl")] TicketAttachment ticketAttachment)
+        public ActionResult Create([Bind(Include = "Id,TicketId,FilePath,Description,FileUrl")] TicketAttachment ticketAttachment, HttpPostedFileBase filePath)
         {
             if (ModelState.IsValid)
             {
+                ticketAttachment.CreateDate = DateTimeOffset.UtcNow;
+                ticketAttachment.UserId = User.Identity.GetUserId();
+
+                if (filePath != null)
+                {
+                    if (filePath.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(filePath.FileName);
+                        var fileExtension = Path.GetExtension(fileName);
+                        if ((fileExtension == ".jpg") || (fileExtension == ".gif") || (fileExtension == ".png") || (fileExtension == ".pdf"))
+                        {
+                            var path = Server.MapPath("~/Images/Attachments/");
+                            // if directory doesnt exist, create it
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+                            else
+                            // if directory exists, check if file exists in directory
+                            {
+                                if (Directory.Exists(fileName))
+                                {
+                                    ticketAttachment.FilePath = "/Images/Attachments/" + fileName;
+                                }
+                                else
+                                {
+                                    ticketAttachment.FilePath = "/Images/Attachments/" + fileName;
+                                    filePath.SaveAs(Path.Combine(path, fileName));
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("filePath", "Invalid file extension. Only .gif, .jpg, .png, and .pdf are allowed");
+                            return View(ticketAttachment);
+                        }
+                    }
+                }
+
                 db.TicketAttachments.Add(ticketAttachment);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Details", "Tickets", new { id = ticketAttachment.TicketId });
             }
 
-            //ViewBag.TicketId = new SelectList(db.Tickets, "Id", "Title", ticketAttachment.TicketId);
-            //ViewBag.UserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 
@@ -75,8 +119,6 @@ namespace BugTracker.Controllers
             {
                 return HttpNotFound();
             }
-            //ViewBag.TicketId = new SelectList(db.Tickets, "Id", "Title", ticketAttachment.TicketId);
-            //ViewBag.UserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 
@@ -93,8 +135,6 @@ namespace BugTracker.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            //ViewBag.TicketId = new SelectList(db.Tickets, "Id", "Title", ticketAttachment.TicketId);
-            //ViewBag.UserId = new SelectList(db.ApplicationUsers, "Id", "FirstName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 

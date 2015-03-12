@@ -50,7 +50,7 @@
             </thead>
 
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.OrderByDescending(m => m.CreateDate))
                 {
                     var ownerName = item.OwnerUser.FirstName + ' ' + item.OwnerUser.LastName;
                     var assignedName = "";
@@ -90,7 +90,7 @@
                         <td>
                             @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                             @Html.ActionLink("Details", "Details", new { id = item.Id })
-                            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                          @*  @Html.ActionLink("Delete", "Delete", new { id = item.Id })  *@
                         </td>
                     </tr>
                 }

@@ -43,12 +43,13 @@ namespace BugTracker.Controllers
         }
 
         // GET: TicketComments/Create
-        public ActionResult Create(int id, string title)
+        public ActionResult Create(int id)
         {
-            ViewBag.TicketTitle = title;
             TicketComment ticketComment = new TicketComment();
             ticketComment.TicketId = id;
-            return View();
+            ticketComment.Ticket = db.Tickets.FirstOrDefault(t => t.Id == id);
+
+            return View(ticketComment);
         }
 
         // POST: TicketComments/Create
@@ -56,7 +57,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Comment,CreateDate,TicketId,UserId")] TicketComment ticketComment)
+        public ActionResult Create([Bind(Include = "Id,Comment,TicketId")] TicketComment ticketComment)
         {
             if (ModelState.IsValid)
             {

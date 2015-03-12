@@ -2,147 +2,102 @@
 @using Microsoft.AspNet.Identity;
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Ticket Index";
 }
 
-<div id="wrapper">
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
-        <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul id="active" class="nav navbar-nav side-nav">
-                <li><a href="/Home/Index"> Home</a></li>
-                <li><a href="/Projects/Index"> Projects</a></li>
-                <li class="selected"><a href="#"> Tickets</a></li>
-                <li class="divider"></li>
-                <li><a href="/RoleManagement/ListRoles"> Roles</a></li>
-                @if (!User.Identity.IsAuthenticated)
-                {
-                    <li><a href="Account/Register">Register</a></li>
-                }
-            </ul>
-            @if (Request.IsAuthenticated)
-            {
-                using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
-                {
-                    @Html.AntiForgeryToken()
-                    <ul class="nav navbar-nav navbar-right navbar-user">
-                        <li>
-                            @Html.ActionLink(User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                        </li>
-                        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
-                    </ul>
-                }
-            }
-            else
-            {
-                <ul class="nav navbar-nav navbar-right navbar-user">
-                    <li>@Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>
-                    <li>@Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
-                </ul>
-            }
-        </div>
-    </nav>
-</div>
-<container>
-    <div class="col-md-12">
-        <div class="col-md-5"></div>
-        <div class="col-md-2">
-            <h2>Tickets</h2>
-        </div>
-    </div>
-</container>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table" id="TicketDataTable">
-    <thead>
-        <tr>
-            <th>
-                <label>Project</label>
-            </th>
-            <th>
-                <label>Ticket</label>
-            </th>
-            <th>
-                <label>Created By</label>
-            </th>
-            <th>
-                <label>Create Date</label>
-            </th>
-            <th>
-                <label>Assigned To</label>
-            </th>
-            <th>
-                <label>Type</label>
-            </th>
-            <th>
-                <label>Priority</label>
-            </th>
-            <th>
-                <label>Status</label>
-            </th>
-            <th>
-                <label>Last Updated</label>
-            </th>
-            <th></th>
-        </tr>
-    </thead>
+    <div class="row">
 
-    <tbody>
-        @foreach (var item in Model)
-        {
-            var ownerName = item.OwnerUser.FirstName + ' ' + item.OwnerUser.LastName;
-            var assignedName = "";
-            if (item.AssignedToUserId != null)
-            {
-                assignedName = item.AssignedToUser.FirstName + ' ' + item.AssignedToUser.LastName;
-            }
-                
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Project.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.Raw(ownerName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreateDate)
-                </td>
-                <td>
-                        @Html.Raw(assignedName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketType.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdateDate)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) 
-                    @*@Html.ActionLink("Delete", "Delete", new { id = item.Id })*@
-                </td>
-            </tr>
-}
-    </tbody>
+        <div class="col-md-12">
+            <div class="col-md-5"></div>
+            <div class="col-md-1"><h2>Tickets</h2></div>
+        </div>
 
-</table>
+        <p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
+        <table class="table" id="TicketDataTable">
+            <thead>
+                <tr>
+                    <th>
+                        <label>Project</label>
+                    </th>
+                    <th>
+                        <label>Ticket</label>
+                    </th>
+                    <th>
+                        <label>Created By</label>
+                    </th>
+                    <th>
+                        <label>Create Date</label>
+                    </th>
+                    <th>
+                        <label>Assigned To</label>
+                    </th>
+                    <th>
+                        <label>Type</label>
+                    </th>
+                    <th>
+                        <label>Priority</label>
+                    </th>
+                    <th>
+                        <label>Status</label>
+                    </th>
+                    <th>
+                        <label>Last Updated</label>
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var ownerName = item.OwnerUser.FirstName + ' ' + item.OwnerUser.LastName;
+                    var assignedName = "";
+                    if (item.AssignedToUserId != null)
+                    {
+                        assignedName = item.AssignedToUser.FirstName + ' ' + item.AssignedToUser.LastName;
+                    }
+
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Project.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.Raw(ownerName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.CreateDate)
+                        </td>
+                        <td>
+                            @Html.Raw(assignedName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TicketType.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.UpdateDate)
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.Id })
+                          @*  @Html.ActionLink("Delete", "Delete", new { id = item.Id })  *@
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div> 
+
 <script>
     $('#TicketDataTable').dataTable();
 </script>
