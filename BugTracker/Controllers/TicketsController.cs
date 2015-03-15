@@ -54,6 +54,11 @@ namespace BugTracker.Controllers
             var tickets = db.Tickets
                 .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
             return View(tickets.ToList());
+
+            //var model = db.Tickets.ToList()
+            //    .Select(p => new TicketViewModel(p));
+
+            //return View(model);
             
         }
 
@@ -316,9 +321,24 @@ namespace BugTracker.Controllers
                     db.SaveChanges();
                 }
             }
-            return RedirectToAction("Details", new { id = ticketComment.Id });
+            return RedirectToAction("Details", new { id = ticketComment.TicketId });
         }
 
+        // GET: Comment Details
+        public ActionResult CommentDetail(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            TicketComment comment = db.TicketComments.Find(id);
+            if(comment == null)
+            {
+                return HttpNotFound();
+            }
+            
+            return View(comment);
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)

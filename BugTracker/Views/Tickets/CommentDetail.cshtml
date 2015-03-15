@@ -1,0 +1,14 @@
+﻿@model BugTracker.Models.TicketComment
+
+@{
+    ViewBag.Title = "Details";
+}
+   
+<div class="col-md-12">
+    @Html.DisplayFor(model => model.Comment)   
+</div>
+    
+<p>
+    <br />
+    @Html.ActionLink("Back", "Details", new{id = Model.TicketId})
+</p>

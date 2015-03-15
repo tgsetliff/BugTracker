@@ -18,9 +18,8 @@ namespace BugTracker.Controllers
         public ActionResult Index()
         {
             var db = new ApplicationDbContext();
-            var model = db.Project
-                .Select(m => new ProjectViewModel() { ProjectId = m.Id, ProjectName = m.Name })
-                .ToList();
+            var model = db.Project.ToList()
+                .Select(m => new ProjectViewModel(m));
 
             return View(model);           
         }

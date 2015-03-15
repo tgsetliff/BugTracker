@@ -1,6 +1,6 @@
 ﻿@model BugTracker.Models.Ticket
 @using Microsoft.AspNet.Identity;
-
+<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
 @{
     ViewBag.Title = " Ticket Details";
 }
@@ -65,7 +65,6 @@
                             {
                                 @Html.DisplayFor(model => model.AssignedToUser.FirstName)
                             }
-
                         </div>
                     </div>
                 </div>
@@ -79,68 +78,79 @@
     
 @* Comments panel *@
 <div class="row">
-        <div class="container">
-            <div class="panel panel-primary">
-                <div class="panel-heading text-center">
-                    <div class="col-md-12">
-                        <div class="col-md-5"></div>
-                        <div class="col-md-1"><h4>Comments</h4></div>
-                        <div class=" col-md-4"></div>
-                        <div class="col-md-2">
-                            <div id="newtab-grid" style="height: 50px; max-width: 140px;">
-                                <ol class="breadcrumb">
-                                    <li><a href="@Url.Action("Create", "TicketComments", new { id = Model.Id, Model.Title })">Add Comment</a></li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-title">
-                    <div class="col-md-12">
-                        <div class="col-md-2">
-                            <h4>Date</h4>
-                        </div>
-                        <div class="col-md-2">
-                            <h4>By</h4>
-                        </div>
-                        <div class="col-md-2">
-                            <h4>Comment</h4>
-                        </div>
-                    </div>                    
-                </div>
-                <div class="panel-body">                
-                    @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
-                    {
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="col-md-2">
-                                    @Html.DisplayFor(model => c.CreateDate)
-                                </div>
-                                <div class="col-md-2">
-                                    @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
-                                    @Html.Raw(userName)
-                                </div>
-                                @if (c.Comment.Length > 80)
-                                {
-                                    <div class="col-md-5">
-                                        {var comment = c.Comment.Substring(0, 80) + "...";}
-                                        @Html.Raw(comment)
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div id="newtab-grid" style="height: 40px; max-width: 90px;">
-                                            <ol class="breadcrumb">
-                                                <li><a href="@Url.Action("Details", "TicketComments", new { id = Model.Id})">Show More</a></li>
-                                            </ol>
-                                        </div>
-                                    </div>
-                                }
-                            </div>                                                     
-                        </div>
-                    }
+    <div class="container">
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <div class="col-md-12">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-1"><h4>Comments</h4></div>
+                    <div class=" col-md-4"></div>
                 </div>
             </div>
+            <div class="panel-title">
+                <div class="col-md-12">
+                    <div class="col-md-2">
+                        <h4>Date</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>By</h4>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>Comment</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2">
+                                @Html.DisplayFor(model => c.CreateDate)
+                            </div>
+                            <div class="col-md-2">
+                                @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                @Html.Raw(userName)
+                            </div>
+                            @if (c.Comment.Length > 120)
+                            {
+                                <div class="col-md-7">
+                                    @{
+                                        var comment = c.Comment.Substring(0, 120);
+                                        @Html.Raw(comment)
+                                    }
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="container" style="width:20px">
+                                        @Html.ActionLink("more...", "CommentDetail", new { id = c.Id })
+                                    </div> 
+                                </div>                           
+                            }
+                            else
+                            {
+                                <div class="col-md-7">
+                                    @Html.DisplayFor(modelItem => c.Comment)
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="panel-footer">
+                @*<div class="well" style="width:1300px">*@
+                    <form action="@Url.Action("Comment")" method="post">
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("TicketId", Model.Id)
+                        <textarea name="Comment" autofocus style="height:100px; max-width:1250px; width:1190px" ; placeholder="Add Comment"></textarea>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                @*</div>*@
+            </div>
         </div>
+    </div>
 </div>
+
+
 
 @*  Attachments *@
 <div class="row">
@@ -192,8 +202,8 @@
                                 @Html.DisplayFor(modelItem => c.Description)
                             </div>
                             <div class="col-md-2">
-                                @{var filePath = c.FilePath;}
-                                <a href="URL?filePath" class="btn btn-primary btn-md">VIEW</a>
+
+                                <a href="@c.FilePath" class="btn btn-primary btn-md">VIEW</a>
                             </div>
                         </div>
                     </div>
@@ -269,3 +279,35 @@
         @Html.ActionLink("Back to List", "Index")
     </div>
 </div>
+
+<script type="text/javascript">
+
+    $.ajaxSetup({ cache: false });
+
+    $(document).ready(function () {
+        $(".openDialog").live("click", function (e) {
+            e.preventDefault();
+
+            $("<div></div>")
+                .addClass("dialog")
+                .attr("id", $(this)
+                .attr("data-dialog-id"))
+                .appendTo("body")
+                .dialog({
+                    title: $(this).attr("data-dialog-title"),
+                    close: function () { $(this).remove(); },
+                    modal: true,
+                    height: 250,
+                    width: 400,
+                    left: 0
+
+                })
+            .load(this.href);
+        });
+
+        $(".close").live("click", function (e) {
+            e.preventDefault();
+            $(this).closest(".dialog").dialog("close");
+        });
+    });
+</script>

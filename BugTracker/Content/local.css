@@ -273,7 +273,7 @@ body {
   font-size: 14px;
   line-height: 1.42857143;
   color: #000000;
-  background-color: #B6B6B6;
+  background-color: #F0F0F0;        
 }
 input,
 button,
@@ -4768,6 +4768,7 @@ a.list-group-item-danger.active:focus {
 .panel-heading {
   padding: 10px 15px;
   height:60px;
+  background-color:white;
   border-bottom: 1px solid transparent;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
@@ -4999,11 +5000,11 @@ a.list-group-item-danger.active:focus {
   border-bottom-color: #809a00;
 }
 .panel-info {
-  border-color: #6e2caf;
+  border-color: #2A9FD6;
 }
 .panel-info > .panel-heading {
   color: #ffffff;
-  background-color: #9933cc;
+  background-color: #2A9FD6;
   border-color: #6e2caf;
 }
 .panel-info > .panel-heading + .panel-collapse .panel-body {
