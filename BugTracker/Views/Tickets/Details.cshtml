@@ -1,6 +1,6 @@
 ﻿@model BugTracker.Models.Ticket
 @using Microsoft.AspNet.Identity;
-<script src="~/Scripts/jquery-ui-1.11.4.min.js"></script>
+
 @{
     ViewBag.Title = " Ticket Details";
 }
@@ -16,8 +16,11 @@
             <div class="panel-heading" style="height:90px">
                 <div class="col-md-12 text-center">
                     <h3>@Html.DisplayFor(model => model.Title)</h3>
+                    @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
+                    @Html.Raw(ownerName + " - ")
+                    @Html.DisplayFor(model => model.CreateDate)
                 </div>
-                <div class="row">
+                @*<div class="row">
                     <div class="col-md-12">
                         <div class="col-md-4"></div>
                         <div class="col-md-2">
@@ -28,7 +31,7 @@
                             @Html.DisplayFor(model => model.CreateDate)
                         </div>
                     </div>
-                </div>
+                </div>*@
             </div>
             <div class="panel-title">
                 <div class="col-md-12">
@@ -149,8 +152,6 @@
         </div>
     </div>
 </div>
-
-
 
 @*  Attachments *@
 <div class="row">

@@ -10,16 +10,12 @@
 <div class="container">
     <div class="row">
         <div class="text-center">
-            <h1>Projects</h1>
-            <p>
-                @if (User.IsInRole("Admin") || User.IsInRole("PM"))
-                {
-                    @Html.ActionLink("Create New", "Create")
-                }
-            </p>
+            <h1>Projects</h1>            
         </div>
+        <p>
+            @Html.ActionLink("Create New", "Create")
+        </p>
     </div>
-
     <div class="row">
     @{
 

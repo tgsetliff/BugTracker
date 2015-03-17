@@ -394,7 +394,7 @@ namespace BugTracker.Controllers
         {
             Session.Clear();
             AuthenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //

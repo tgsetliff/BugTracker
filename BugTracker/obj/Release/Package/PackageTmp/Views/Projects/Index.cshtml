@@ -9,35 +9,49 @@
 
 <div class="container">
     <div class="row">
-        <h2>Projects</h2>
+        <div class="text-center">
+            <h1>Projects</h1>            
+        </div>
         <p>
             @if (User.IsInRole("Admin") || User.IsInRole("PM"))
             {
                 @Html.ActionLink("Create New", "Create")
             }
-                
         </p>
-        <table class="table">
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ProjectName)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.ProjectId }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.ProjectId })
-                            @*@Html.ActionLink("Delete", "Delete", new { id = item.ProjectId })*@
-                        <td>
-                    </tr>
-                }
-            </tbody>
-            
-
-        </table>
     </div>
+    <div class="row">
+    @{
+
+        foreach (var item in Model.OrderBy(p=> p.ProjectName))
+        {
+            <div class="col-md-3">
+                <div class="panel panel-info">
+                    <div class="panel-heading text-center">
+                        <h4>@item.ProjectName</h4>                    
+                    </div>
+                    <div class="panel-body">
+                        <label>Tickets: </label> 
+                        <div class="pull-right">@item.TotalTickets</div>
+                        <br />
+                        <label>Open:</label> 
+                        <div class="pull-right">@item.OpenTickets</div>
+                        <br />
+                        <label>Resolved:</label>
+                        <div class="pull-right">@item.ResolvedTickets</div>
+                        <br />
+                        <label>Other:</label>
+                        <div class="pull-right">@item.OtherTickets</div>
+                        <hr />
+                        <div class="pull-right">
+                            <a href="@Url.Action("Details", new { Id = item.ProjectId })" class="btn btn-link">Details</a>
+                            <a href="@Url.Action("Edit", new { Id = item.ProjectId })" class="btn btn-link">Edit</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        }
+    } 
+    </div>
+
 </div>
-
-    
-

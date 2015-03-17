@@ -1465,11 +1465,11 @@ th {
 }
 .table-striped > tbody > tr:nth-child(odd) > td,
 .table-striped > tbody > tr:nth-child(odd) > th {
-  background-color: #080808;
+  background-color: #F0F0F0;
 }
 .table-hover > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > th {
-  background-color: #282828;
+  background-color: #98a7e4;
 }
 table col[class*="col-"] {
   position: static;

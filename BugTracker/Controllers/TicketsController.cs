@@ -24,42 +24,11 @@ namespace BugTracker.Controllers
         public ActionResult Index()
         {
  
-            //// if PM, then show tickets in projects they are assigned
-            //if (User.IsInRole("PM"))
-            //{
-            //    var tickets = db.Tickets
-            //        .Include("Users")
-            //        .Where(p => (p. == User.Identity.GetUserId() || p.OwnerUserId == User.Identity.GetUserId()))
-            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            //}
+            var db = new ApplicationDbContext();
+            var model = db.Tickets.ToList()
+                .Select(m => new TicketViewModel(m));
 
-            //// if developer, then show tickets they are assigned or they own
-            //if (User.IsInRole("Developer"))
-            //{
-            //    var tickets = db.Tickets
-            //        .Where(p => (p.AssignedToUserId == User.Identity.GetUserId() || p.OwnerUserId == User.Identity.GetUserId()))
-            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            //}
-
-            //// if submitter, then show tickets in projects they are assigned
-            //if (User.IsInRole("Submitter"))
-            //{
-            //    var tickets = db.Tickets
-            //        .Where(p => (p.OwnerUserId == User.Identity.GetUserId()))
-            //        .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            //}
-
-            // build list of tickets to be displayed
-            // If admin, see all
-            var tickets = db.Tickets
-                .Include(t => t.AssignedToUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(tickets.ToList());
-
-            //var model = db.Tickets.ToList()
-            //    .Select(p => new TicketViewModel(p));
-
-            //return View(model);
-            
+            return View(model);                       
         }
 
         // GET: Tickets/Details/5
@@ -93,7 +62,7 @@ namespace BugTracker.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,AssignedToUserId")] Ticket ticket)
+        public ActionResult Create([Bind(Include = "Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId")] Ticket ticket)
         {
             if (ModelState.IsValid)
             {
@@ -240,6 +209,17 @@ namespace BugTracker.Controllers
                     // check assigned to user, if changed, notify new asignee
                     if (getTicketHistory.AssignedToUserId != ticket.AssignedToUserId)
                     {
+                        // update history
+                        db.TicketHistories.Add(new TicketHistory
+                        {
+                            ChangeDate = DateTimeOffset.UtcNow,
+                            Property = "Assigned To",
+                            OldValue = getTicketHistory.AssignedToUser.FirstName + " " + getTicketHistory.AssignedToUser.LastName,
+                            NewValue = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName,
+                            TicketId = ticket.Id,
+                            UserId = userId
+                        });
+
                         var MyAddress = ConfigurationManager.AppSettings["ContactEmail"];
                         var MyUsername = ConfigurationManager.AppSettings["Username"];
                         var MyPassword = ConfigurationManager.AppSettings["Password"];

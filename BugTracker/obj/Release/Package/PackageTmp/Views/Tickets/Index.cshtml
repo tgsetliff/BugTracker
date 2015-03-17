@@ -1,6 +1,7 @@
-﻿@model IEnumerable<BugTracker.Models.Ticket>
+﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
 
+@model IEnumerable<TicketViewModel>
 @{
     ViewBag.Title = "Ticket Index";
 }
@@ -15,7 +16,7 @@
         <p>
             @Html.ActionLink("Create New", "Create")
         </p>
-        <table class="table" id="TicketDataTable">
+        <table class="table table-hover table-striped table-responsive" id="TicketDataTable">
             <thead>
                 <tr>
                     <th>
@@ -50,46 +51,39 @@
             </thead>
 
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.OrderByDescending(m => m.TicketCreated))
                 {
-                    var ownerName = item.OwnerUser.FirstName + ' ' + item.OwnerUser.LastName;
-                    var assignedName = "";
-                    if (item.AssignedToUserId != null)
-                    {
-                        assignedName = item.AssignedToUser.FirstName + ' ' + item.AssignedToUser.LastName;
-                    }
-
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Project.Name)
+                            @Html.DisplayFor(modelItem => item.TicketProject)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Title)
+                            @Html.DisplayFor(modelItem => item.TicketTitle)
                         </td>
                         <td>
-                            @Html.Raw(ownerName)
+                            @Html.DisplayFor(modelItem => item.TicketOwnerUser)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.CreateDate)
+                            @Html.DisplayFor(modelItem => item.TicketCreated)
                         </td>
                         <td>
-                            @Html.Raw(assignedName)
+                            @Html.DisplayFor(modelItem => item.TicketAssignedToUser)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TicketType.Name)
+                            @Html.DisplayFor(modelItem => item.TicketType)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TicketPriority.Name)
+                            @Html.DisplayFor(modelItem => item.TicketPriority)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.TicketStatus.Name)
+                            @Html.DisplayFor(modelItem => item.TicketStatus)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.UpdateDate)
+                            @Html.DisplayFor(modelItem => item.TicketUpdated)
                         </td>
                         <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.Id })
+                            @Html.ActionLink("Edit", "Edit", new { id = item.TicketId }) |
+                            @Html.ActionLink("Details", "Details", new { id = item.TicketId })
                           @*  @Html.ActionLink("Delete", "Delete", new { id = item.Id })  *@
                         </td>
                     </tr>

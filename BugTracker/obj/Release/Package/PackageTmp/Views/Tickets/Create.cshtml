@@ -14,92 +14,57 @@
             <h2>New Ticket</h2>
             <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            <div class="form-group">
-                @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", autofocus="autofocus" } })
-                    @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
-                </div>
-            </div>
 
-            <div class="form-group">
-                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    <textarea name="Description" autofocus></textarea>
-                    @*@Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })*@
-                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            @*<div class="form-group">
-                    @Html.LabelFor(model => model.CreateDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.CreateDate, new { htmlAttributes = new { @class = "form-control"  } })
-                        @Html.ValidationMessageFor(model => model.CreateDate, "", new { @class = "text-danger" })
+            <div class="col-md-12">
+                <div class="row">
+                    @Html.LabelFor(model => model.Title, "Title", htmlAttributes: new { @class = "control-label col-md-1" })
+                    <div class="col-md-6">
+                        @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control", autofocus="autofocus" } })
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
                     </div>
-                </div>*@
-
-            @*<div class="form-group">
-                    @Html.LabelFor(model => model.UpdateDate, htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.EditorFor(model => model.UpdateDate, new { htmlAttributes = new { @class = "form-control" } })
-                        @Html.ValidationMessageFor(model => model.UpdateDate, "", new { @class = "text-danger" })
+                    <div class="col-md-3"></div>
+                    <div class="col-md-2">
+                        <input type="submit" value="Create" class="btn btn-default" />
                     </div>
-                </div>*@
-
-            <div class="form-group">
-                @Html.Label("Project", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+                    @*</div>*@
+                    <div class="col-md-4"></div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                @Html.Label("Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("TicketTypeId", null, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.TicketTypeId, "", new { @class = "text-danger" })
+                <div class="row">
+                    @Html.LabelFor(model => model.ProjectId, "Project", htmlAttributes: new { @class = "control-label col-md-3" })
+                    @Html.LabelFor(model => model.TicketStatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.TicketPriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-3" })
+                    @*@Html.LabelFor(model => model.AssignedToUserId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-2" })*@
                 </div>
-            </div>
-
-            <div class="form-group">
-                @Html.Label("Priority", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("TicketPriorityId", null, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.TicketPriorityId, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            <div class="form-group">
-                @Html.Label("Status", htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.DropDownList("TicketStatusId", null, htmlAttributes: new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.TicketStatusId, "", new { @class = "text-danger" })
-                </div>
-            </div>
-
-            @*<div class="form-group">
-                    @Html.LabelFor(model => model.OwnerUserId, "OwnerUserId", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.DropDownList("OwnerUserId", null, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.OwnerUserId, "", new { @class = "text-danger" })
+                <div class="row">
+                    <div class="col-md-3">
+                        @Html.DropDownList("ProjectId", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
                     </div>
-                </div>*@
 
-            @*<div class="form-group">
-                    @Html.LabelFor(model => model.AssignedToUserId, "AssignedToUserId", htmlAttributes: new { @class = "control-label col-md-2" })
-                    <div class="col-md-10">
-                        @Html.DropDownList("AssignedToUserId", null, htmlAttributes: new { @class = "form-control" })
-                        @Html.ValidationMessageFor(model => model.AssignedToUserId, "", new { @class = "text-danger" })
+                    <div class="col-md-2">
+                        @Html.DropDownList("TicketStatusId", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.TicketStatusId, "", new { @class = "text-danger" })
                     </div>
-                </div>*@
-
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <div class="col-md-2">
+                        @Html.DropDownList("TicketPriorityId", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.TicketPriorityId, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-3">
+                        @Html.DropDownList("TicketTypeId", null, htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.TicketTypeId, "", new { @class = "text-danger" })
+                    </div>
                 </div>
-            </div>
+                <div class="row">
+                    @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-1" })
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <textarea name="Description"></textarea>
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>  
         </div>
     }
 

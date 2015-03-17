@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Models
 {
@@ -9,6 +11,7 @@ namespace BugTracker.Models
     {
         public int TicketId { get; set; }
         public string TicketTitle { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
         public DateTimeOffset TicketCreated { get; set; }
         public string TicketProject { get; set; }
         public string TicketType { get; set; }
@@ -16,8 +19,10 @@ namespace BugTracker.Models
         public string TicketPriority { get; set; }
         public string TicketOwnerUser { get; set; }
         public string TicketAssignedToUser { get; set; }
-        public DateTimeOffset TicketUpdated { get; set; }
+        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
+        public DateTimeOffset? TicketUpdated { get; set; }
 
+      
         public TicketViewModel(Ticket ticket)
         {
             this.TicketId = ticket.Id;
@@ -26,9 +31,17 @@ namespace BugTracker.Models
             this.TicketProject = ticket.Project.Name;
             this.TicketType = ticket.TicketType.Name;
             this.TicketStatus = ticket.TicketStatus.Name;
-            this.TicketPriority = ticket.TicketPriority.Name;
+            this.TicketPriority = ticket.TicketPriority.Name;            
             this.TicketOwnerUser = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName;
-            //this.TicketUpdated = ticket.UpdateDate.HasValue = 'True';
+            if(ticket.AssignedToUserId != null)
+            {
+                this.TicketAssignedToUser = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
+            }
+            else
+            {
+                this.TicketAssignedToUser = null;
+            }
+            this.TicketUpdated = ticket.UpdateDate;
         }
     }
 }
