@@ -5,270 +5,284 @@
     ViewBag.Title = " Ticket Details";
 }
 
-<div class="container">  
-    <br />
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
-</div>
 <div class="row">
     <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-heading" style="height:90px">
-                <div class="col-md-12 text-center">
-                    <h3>@Html.DisplayFor(model => model.Title)</h3>
-                    @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
-                    @Html.Raw(ownerName + " - ")
-                    @Html.DisplayFor(model => model.CreateDate)
-                </div>
-                @*<div class="row">
-                    <div class="col-md-12">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-2">
-                            @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
-                            @Html.Raw(ownerName)
-                        </div>
-                        <div class="col-md-1">
-                            @Html.DisplayFor(model => model.CreateDate)
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="media">
+                        <div class="media-body">
+                            <ol class="btn btn-primary pull-right">
+                                <li><a href="@Url.Action("Edit", "Tickets", new { id = Model.Id })">Edit</a></li>
+                            </ol>
+                            <h3 class="media-heading">@Html.DisplayFor(model => model.Title)</h3>
+                            <h5>
+                                @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
+                                @ownerName  - 
+                                @Html.DisplayFor(model => model.CreateDate)
+                            </h5>
+                            <div class="feed-item-body">
+                                <h4>@Html.DisplayFor(model => model.Description)</h4>
+                            </div>
                         </div>
                     </div>
-                </div>*@
-            </div>
-            <div class="panel-title">
-                <div class="col-md-12">
+                </div>
+                <div class="panel panel-body">
                     @Html.LabelFor(model => model.ProjectId, "Project", htmlAttributes: new { @class = "control-label col-md-3" })
                     @Html.LabelFor(model => model.TicketStatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
                     @Html.LabelFor(model => model.TicketPriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
                     @Html.LabelFor(model => model.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
                     @Html.LabelFor(model => model.AssignedToUserId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-2" })
-                </div>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="col-md-3">
-                            @Html.DisplayFor(model => model.Project.Name)
-                        </div>
-
-                        <div class="col-md-2">
-                            @Html.DisplayFor(model => model.TicketStatus.Name)
-                        </div>
-                        <div class="col-md-2">
-                            @Html.DisplayFor(model => model.TicketPriority.Name)
-                        </div>
-                        <div class="col-md-2">
-                            @Html.DisplayFor(model => model.TicketType.Name)
-                        </div>
-                        <div class="col-md-2">
-                            @if (Model.AssignedToUserId != null)
-                            {
-                                var assignedUser = Model.AssignedToUser.FirstName + ' ' + Model.AssignedToUser.LastName;
-                                @Html.Raw(assignedUser)
-                            }
-                            else
-                            {
-                                @Html.DisplayFor(model => model.AssignedToUser.FirstName)
-                            }
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <h5>@Html.DisplayFor(model => model.Description)</h5>
-                </div>
-            </div>
-        </div>
-    </div>    
-</div>
-    
-@* Comments panel *@
-<div class="row">
-    <div class="container">
-        <div class="panel panel-primary">
-            <div class="panel-heading text-center">
-                <div class="col-md-12">
-                    <div class="col-md-5"></div>
-                    <div class="col-md-1"><h4>Comments</h4></div>
-                    <div class=" col-md-4"></div>
-                </div>
-            </div>
-            <div class="panel-title">
-                <div class="col-md-12">
-                    <div class="col-md-2">
-                        <h4>Date</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>By</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>Comment</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-body">
-                @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-2">
-                                @Html.DisplayFor(model => c.CreateDate)
-                            </div>
-                            <div class="col-md-2">
-                                @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
-                                @Html.Raw(userName)
-                            </div>
-                            @if (c.Comment.Length > 120)
-                            {
-                                <div class="col-md-7">
-                                    @{
-                                        var comment = c.Comment.Substring(0, 120);
-                                        @Html.Raw(comment)
-                                    }
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="container" style="width:20px">
-                                        @Html.ActionLink("more...", "CommentDetail", new { id = c.Id })
-                                    </div> 
-                                </div>                           
-                            }
-                            else
-                            {
-                                <div class="col-md-7">
-                                    @Html.DisplayFor(modelItem => c.Comment)
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-            <div class="panel-footer">
-                @*<div class="well" style="width:1300px">*@
-                    <form action="@Url.Action("Comment")" method="post">
-                        @Html.AntiForgeryToken()
-                        @Html.Hidden("TicketId", Model.Id)
-                        <textarea name="Comment" autofocus style="height:100px; max-width:1250px; width:1190px" ; placeholder="Add Comment"></textarea>
-                        <button type="submit" class="btn btn-primary">Add</button>
-                    </form>
-                @*</div>*@
-            </div>
-        </div>
-    </div>
-</div>
-
-@*  Attachments *@
-<div class="row">
-    <div class="container">            
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="col-md-12">
-                    <div class="col-md-5"></div>
-                    <div class="col-md-1"><h4>Attachments</h4></div>
-                    <div class=" col-md-4"></div>
-                    <div class="col-md-2">
-                        <div id="newtab-grid" style="height: 50px; max-width: 140px;">
-                            <ol class="breadcrumb">
-                                <li><a href="@Url.Action("Create", "TicketAttachments", new { id = Model.Id, Model.Title })">Add Attachment</a></li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="panel-title">
-                <div class="col-md-12">
-                    <div class="col-md-2">
-                        <h4>Date</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>By</h4>
-                    </div>
-                    <div class="col-md-6">
-                        <h4>Description</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>Attachment</h4>
-                    </div>
-                </div>                    
-            </div>
-            <div class="panel-body">
-                @foreach (var c in Model.Attachments.OrderByDescending(m => m.TicketId))
-                {
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="col-md-2">
-                                @Html.DisplayFor(modelItem => c.CreateDate)
-                            </div>
-                            <div class="col-md-2">
-                                @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
-                                @Html.Raw(userName)
-                            </div>
-                            <div class="col-md-6">
-                                @Html.DisplayFor(modelItem => c.Description)
-                            </div>
-                            <div class="col-md-2">
-
-                                <a href="@c.FilePath" class="btn btn-primary btn-md">VIEW</a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>          
-        </div>
-    </div>
-</div>
-
-@* History *@
-<div class="row">
-    <div class="container">            
-        <div class="panel panel-primary">
-            <div class="panel-heading text-center">
-                <h4>History</h4>
-            </div>
-            <div class="panel-title">
-                <div class="col-md-12">
-                    <div class="col-md-2">
-                        <h4>Date</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>By</h4>
-                    </div>
-                    <div class="col-md-2">
-                        <h4>Property</h4>
-                    </div>
                     <div class="col-md-3">
-                        <h4>Old Value</h4>
+                        @Html.DisplayFor(model => model.Project.Name)
                     </div>
-                    <div class="col-md-3">
-                        <h4>New Value</h4>
+
+                    <div class="col-md-2">
+                        @Html.DisplayFor(model => model.TicketStatus.Name)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.DisplayFor(model => model.TicketPriority.Name)
+                    </div>
+                    <div class="col-md-2">
+                        @Html.DisplayFor(model => model.TicketType.Name)
+                    </div>
+                    <div class="col-md-2">
+                        @if (Model.AssignedToUserId != null)
+                        {
+                            var assignedUser = Model.AssignedToUser.FirstName + ' ' + Model.AssignedToUser.LastName;
+                            @assignedUser
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.AssignedToUser.FirstName)
+                        }
                     </div>
                 </div>
             </div>
-            <div class="panel-body">
-                @foreach (var c in Model.History.OrderByDescending(m => m.ChangeDate))
-                {
+
+            <div class="panel panel-default">
+                <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="col-md-2">
-                                @Html.DisplayFor(modelItem => c.ChangeDate)
-                            </div>
-                            <div class="col-md-2">
-                                @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
-                                @Html.Raw(userName)
-                            </div>
-                            <div class="col-md-2">
-                                @Html.DisplayFor(modelItem => c.Property)
-                            </div>
-                            <div class="col-md-3">
-                                @Html.DisplayFor(modelItem => c.OldValue)
-                            </div>
-                            <div class="col-md-3">
-                                @Html.DisplayFor(modelItem => c.NewValue)
+                            <ul class="nav nav-tabs" id="myTab">
+                                <li class="active">
+                                    <a data-toggle="tab" href="#comments">Comments</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#attachments">Attachments</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#histories">History</a>
+                                </li>
+                            </ul>
+                            <div id="TabContent" class="tab-content">
+                                <div id="comments" class="tab-pane fade active in">
+                                    <br />
+                                    <form action="@Url.Action("Comment")" method="post" enctype="multipart/form-data">
+                                        <div class="row">
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("TicketId", Model.Id)
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-10">
+                                                        <textarea name="Comment" class="form-control form-control-comment" autofocus style="height:100px; width:900px; max-width:920px" , placeholder=" add comment"></textarea>
+                                                        @Html.ValidationMessageFor(model => model.Comments, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-1">
+                                                        <button type="submit" class="btn btn-primary pull-right">Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="row">
+                                        <div class="panel-title">
+                                            <div class="col-md-12">
+                                                <div class="col-md-1">
+                                                    <h4>Date</h4>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <h4>By</h4>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <h4>Comment</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="panel-body">
+                                            @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
+                                            {
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-1">
+                                                            @Html.DisplayFor(model => c.CreateDate)
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                                            @userName
+                                                        </div>
+                                                        @if (c.Comment.Length > 90)
+                                                        {
+                                                            <div class="col-md-7 comments" data-toggle="modal" data-target="#@c.Id">
+                                                                @c.Comment.Substring(0, 90)... <i class="glyphicon glyphicon-plus"></i>
+                                                            </div>
+                                                            <div class="modal fade" tabindex="-1" role="dialog" id="@c.Id" data-backdrop="false">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                            <h4 class="modal-title">Comment</h4>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>@c.Comment</p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                        </div>
+                                                                    </div><!-- /.modal-content -->
+                                                                </div><!-- /.modal-dialog -->
+                                                            </div><!-- /.modal -->
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="col-md-7">
+                                                                @Html.DisplayFor(modelItem => c.Comment)
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="attachments" class="tab-pane fade">
+                                    <div class="row">
+                                        <form action="@Url.Action("Attachment")" method="post" enctype="multipart/form-data">
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("TicketId", Model.Id)
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <label class="control-label col-md-2">Description</label>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-10">
+                                                        <textarea name="Description" placeholder="Description" class="form-control" style="height:100px; width:900px; max-width:920px" rows="2"></textarea>
+                                                        @Html.ValidationMessageFor(model => model.Attachments, "", new { @class = "text-danger" })
+                                                    </div>
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-1">
+                                                        <button type="submit" class="btn btn-primary pull-right">Add</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-7">
+                                                        <input type="file" name="file" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        <div class="panel-title">
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <div class="col-md-2">
+                                                        <h4>Date</h4>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <h4>By</h4>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h4>Description</h4>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <h4>Attachment</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            @foreach (var c in Model.Attachments.OrderByDescending(m => m.TicketId))
+                                            {
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-2">
+                                                            @Html.DisplayFor(modelItem => c.CreateDate)
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                                            @Html.Raw(userName)
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            @Html.DisplayFor(modelItem => c.Description)
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <a href="@c.FilePath" target="_blank" class="btn btn-primary btn-xs">VIEW</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="histories" class="tab-pane fade">
+                                    <div class="row">
+                                        <div class="panel-title">
+                                            <div class="col-md-12">
+                                                <div class="col-md-2">
+                                                    <h4>Date</h4>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <h4>By</h4>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <h4>Property</h4>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4>Old Value</h4>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <h4>New Value</h4>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel-body">
+                                            @foreach (var c in Model.History.OrderByDescending(m => m.ChangeDate))
+                                            {
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-2">
+                                                            @Html.DisplayFor(modelItem => c.ChangeDate)
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                                            @userName
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            @Html.DisplayFor(modelItem => c.Property)
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(modelItem => c.OldValue)
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            @Html.DisplayFor(modelItem => c.NewValue)
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <hr />
-                        </div>
-                    </div>
-                }
+                </div>
             </div>
         </div>
     </div>
@@ -276,39 +290,16 @@
 <div class="container">
     <div class="row">
         <br />
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
         @Html.ActionLink("Back to List", "Index")
     </div>
 </div>
 
 <script type="text/javascript">
 
-    $.ajaxSetup({ cache: false });
+    // tab control
+    $('#myTab a').click(function (e) {
+        e.preventDefault()
+        $(this).tab('show')
+    })
 
-    $(document).ready(function () {
-        $(".openDialog").live("click", function (e) {
-            e.preventDefault();
-
-            $("<div></div>")
-                .addClass("dialog")
-                .attr("id", $(this)
-                .attr("data-dialog-id"))
-                .appendTo("body")
-                .dialog({
-                    title: $(this).attr("data-dialog-title"),
-                    close: function () { $(this).remove(); },
-                    modal: true,
-                    height: 250,
-                    width: 400,
-                    left: 0
-
-                })
-            .load(this.href);
-        });
-
-        $(".close").live("click", function (e) {
-            e.preventDefault();
-            $(this).closest(".dialog").dialog("close");
-        });
-    });
 </script>

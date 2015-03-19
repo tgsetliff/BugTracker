@@ -1,0 +1,64 @@
+@* Comments panel *@
+<div class="row">
+        <div class="container">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    <div class="col-md-12">
+                        <div class="col-md-5"></div>
+                        <div class="col-md-1"><h4>Comments</h4></div>
+                        <div class=" col-md-4"></div>
+                        <div class="col-md-2">
+                            <div id="newtab-grid" style="height: 50px; max-width: 140px;">
+                                <ol class="breadcrumb">
+                                    <li><a href="@Url.Action("Create", "TicketComments", new { id = Model.Id, Model.Title })">Add Comment</a></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-title">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <h4>Date</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>By</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>Comment</h4>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="panel-body">                
+                    @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(model => c.CreateDate)
+                                </div>
+                                <div class="col-md-2">
+                                    @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                    @Html.Raw(userName)
+                                </div>
+                                @if (c.Comment.Length > 80)
+                                {
+                                    <div class="col-md-5">
+                                        {var comment = c.Comment.Substring(0, 80) + "...";}
+                                        @Html.Raw(comment)
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div id="newtab-grid" style="height: 40px; max-width: 90px;">
+                                            <ol class="breadcrumb">
+                                                <li><a href="@Url.Action("Details", "TicketComments", new { id = Model.Id})">Show More</a></li>
+                                            </ol>
+                                        </div>
+                                    </div>
+                                }
+                            </div>                                                     
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+</div>

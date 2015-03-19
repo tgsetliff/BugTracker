@@ -11,8 +11,6 @@
         @Html.AntiForgeryToken()
 
         <div class="form-horizontal">
-            <h2>New Ticket</h2>
-            <hr />
             @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
             <div class="col-md-12">
@@ -28,6 +26,15 @@
                     </div>
                     @*</div>*@
                     <div class="col-md-4"></div>
+                </div>
+                <div class="row">
+                    @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-1" })
+                </div>
+                <div class="row">
+                    <div class="col-md-10">
+                        <textarea name="Description"></textarea>
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
                 </div>
                 <div class="row">
                     @Html.LabelFor(model => model.ProjectId, "Project", htmlAttributes: new { @class = "control-label col-md-3" })
@@ -55,15 +62,7 @@
                         @Html.ValidationMessageFor(model => model.TicketTypeId, "", new { @class = "text-danger" })
                     </div>
                 </div>
-                <div class="row">
-                    @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-1" })
-                </div>
-                <div class="row">
-                    <div class="col-md-10">
-                        <textarea name="Description"></textarea>
-                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                    </div>
-                </div>
+                
             </div>  
         </div>
     }

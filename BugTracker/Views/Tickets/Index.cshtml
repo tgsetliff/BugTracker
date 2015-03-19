@@ -1,7 +1,8 @@
 ﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
 
-@model IEnumerable<TicketViewModel>
+@model IEnumerable<Ticket>
+
 @{
     ViewBag.Title = "Ticket Index";
 }
@@ -12,18 +13,21 @@
             <div class="col-md-5"></div>
             <div class="col-md-1"><h2>Tickets</h2></div>
         </div>
-
-        <p>
-            @Html.ActionLink("Create New", "Create")
-        </p>
+        <div class="body-content">
+            <ul class="btn btn-success btn-sm">
+                <li><a href="@Url.Action("Create", "Tickets")">New Ticket</a></li>
+            </ul>
+            <br />
+        </div> 
+        <div class="row"><p></p></div>
         <table class="table table-hover table-striped table-responsive" id="TicketDataTable">
             <thead>
                 <tr>
                     <th>
-                        <label>Project</label>
+                        <label>Title</label>
                     </th>
                     <th>
-                        <label>Ticket</label>
+                        <label>Project</label>
                     </th>
                     <th>
                         <label>Created By</label>
@@ -46,52 +50,56 @@
                     <th>
                         <label>Last Updated</label>
                     </th>
-                    <th></th>
+
                 </tr>
             </thead>
 
-            <tbody>
-                @foreach (var item in Model.OrderByDescending(m => m.TicketCreated))
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketProject)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketTitle)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketOwnerUser)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketCreated)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketAssignedToUser)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketType)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketPriority)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketStatus)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.TicketUpdated)
-                        </td>
-                        <td>
-                            @Html.ActionLink("Edit", "Edit", new { id = item.TicketId }) |
-                            @Html.ActionLink("Details", "Details", new { id = item.TicketId })
-                          @*  @Html.ActionLink("Delete", "Delete", new { id = item.Id })  *@
-                        </td>
-                    </tr>
-                }
+            <tbody>                
             </tbody>
         </table>
     </div> 
-
+@section scripts {
+<script src="/Scripts/jquery.dataTables.min.js"></script>
 <script>
-    $('#TicketDataTable').dataTable();
+    $(document).ready(function () {
+
+        $('#TicketDataTable').dataTable({
+            "serverSide": true,
+            "ajax": {
+                "url": "/Tickets/AjaxHandler",
+                "type": "POST"
+            },
+            "processing": true,
+            "columns": [
+                            {
+                                "data": "Title"
+                            },
+                            {
+                                "data": "Project"
+                            },
+                            {
+                                "data": "OwnerUser"
+                            },
+                            {
+                                "data": "Created"
+                            },
+                            {
+                                "data": "AssignedToUser"
+                            },
+                            {
+                                "data": "Type"
+                            },
+                            {
+                                "data": "Priority"
+                            },
+                            {
+                                "data": "Status"
+                            },
+                            {
+                                "data": "Updated"
+                            }
+            ]
+        });
+    });
 </script>
+}

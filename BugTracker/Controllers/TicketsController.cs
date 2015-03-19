@@ -11,24 +11,21 @@ using Microsoft.AspNet.Identity;
 using System.Configuration;
 using SendGrid;
 using System.Net.Mail;
+using DataTables.Mvc;
+using System.IO;
 
 namespace BugTracker.Controllers
-{
+{   [Authorize]
     public class TicketsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        public ApplicationDbContext Ticket = new ApplicationDbContext();
+        //public ApplicationDbContext Ticket = new ApplicationDbContext();
 
         // GET: Tickets
         public ActionResult Index()
         {
- 
-            var db = new ApplicationDbContext();
-            var model = db.Tickets.ToList()
-                .Select(m => new TicketViewModel(m));
-
-            return View(model);                       
+            return View();                       
         }
 
         // GET: Tickets/Details/5
@@ -286,7 +283,7 @@ namespace BugTracker.Controllers
         }
 
         // add a comment
-        [Authorize]
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Comment([Bind(Include = "TicketId, Comment")] string Slug, TicketComment ticketComment)
@@ -319,6 +316,152 @@ namespace BugTracker.Controllers
             
             return View(comment);
         }
+
+
+        // POST: Attachments
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Attachment([Bind(Include = "Id,TicketId,FilePath,Description,FileUrl")] TicketAttachment ticketAttachment, HttpPostedFileBase file)
+        {
+            if (ModelState.IsValid)
+            {
+                ticketAttachment.CreateDate = DateTimeOffset.UtcNow;
+                ticketAttachment.UserId = User.Identity.GetUserId();
+
+                if (file != null)
+                {
+                    if (file.ContentLength > 0)
+                    {
+                        var fileName = Path.GetFileName(file.FileName);
+                        var fileExtension = Path.GetExtension(fileName);
+                        if ((fileExtension == ".jpg") || (fileExtension == ".gif") || (fileExtension == ".png") || (fileExtension == ".pdf"))
+                        {
+                            var path = Server.MapPath("~/Images/Attachments/");
+                            // if directory doesnt exist, create it
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+                            else
+                            // if directory exists, check if file exists in directory
+                            {
+                                if (Directory.Exists(fileName))
+                                {
+                                    ticketAttachment.FilePath = "/Images/Attachments/" + fileName;
+                                }
+                                else
+                                {
+                                    ticketAttachment.FilePath = "/Images/Attachments/" + fileName;
+                                    file.SaveAs(Path.Combine(path, fileName));
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            ModelState.AddModelError("filePath", "Invalid file extension. Only .gif, .jpg, .png, and .pdf are allowed");
+                            return View("Details", new { id = ticketAttachment.TicketId });
+                        }
+                    }
+                }
+
+                db.TicketAttachments.Add(ticketAttachment);
+                db.SaveChanges();
+                return RedirectToAction("Details", "Tickets", new { id = ticketAttachment.TicketId });
+            }
+
+            return View(ticketAttachment);
+        }
+
+        // datatable handler
+        [HttpPost]
+        public JsonResult AjaxHandler([ModelBinder(typeof(DataTablesBinder))] IDataTablesRequest param)
+        {
+            IQueryable<Ticket> filteredTickets = db.Tickets.AsQueryable();
+
+            var user = db.Users.Single(u=> u.UserName == User.Identity.Name);
+            var userId = User.Identity.GetUserId();
+                
+                // pm and developer sees tickets they own or are assigned to
+                if (User.IsInRole("PM"))
+                    filteredTickets = user.Projects.SelectMany(t=> t.Tickets).AsQueryable();
+                else if (User.IsInRole("Developer"))
+                    filteredTickets = filteredTickets.Where(t => t.AssignedToUserId == userId);
+                else if (User.IsInRole("Submitter"))
+                    filteredTickets = filteredTickets.Where(t => t.OwnerUserId == userId);
+          
+            var search = param.Search.Value;
+            if (!string.IsNullOrEmpty(search))
+            {
+                filteredTickets = filteredTickets
+                    .Where(t => t.Project.Name.Contains(search) ||
+                        t.Title.Contains(search) ||
+                        (t.OwnerUser.FirstName + " " + t.OwnerUser.LastName).Contains(search) ||
+                        (t.AssignedToUser.FirstName + " " + t.AssignedToUser.LastName).Contains(search) ||
+                        t.TicketPriority.Name.Contains(search) ||
+                        t.TicketStatus.Name.Contains(search) ||
+                        t.TicketType.Name.Contains(search)
+                        );              
+            }
+
+            var column = param.Columns.FirstOrDefault(r => r.IsOrdered == true);
+            if(column != null)
+            {
+                if(column.SortDirection == Column.OrderDirection.Descendant)
+                {
+                    switch(column.Data)
+                    {
+                        case "Title": filteredTickets = filteredTickets.OrderByDescending(t => t.Title);
+                            break;
+                        case "Project": filteredTickets = filteredTickets.OrderByDescending(t => t.Project.Name);
+                            break;
+                        case "OwnerUser": filteredTickets = filteredTickets.OrderByDescending(t => t.OwnerUser.LastName);
+                            break;
+                        case "Created": filteredTickets = filteredTickets.OrderByDescending(t => t.CreateDate);
+                            break;
+                        case "AssignedToUser": filteredTickets = filteredTickets.OrderByDescending(t => t.AssignedToUser.LastName);
+                            break;
+                        case "Type": filteredTickets = filteredTickets.OrderByDescending(t => t.TicketType.Name);
+                            break;
+                        case "Priority": filteredTickets = filteredTickets.OrderByDescending(t => t.TicketPriority.Name);
+                            break;
+                        case "Status": filteredTickets = filteredTickets.OrderByDescending(t => t.TicketStatus.Name);
+                            break;
+                        case "Updated": filteredTickets = filteredTickets.OrderByDescending(t => t.UpdateDate);
+                            break;
+
+                    }
+                }
+                else
+                {
+                    switch (column.Data)
+                    {
+                        case "Title": filteredTickets = filteredTickets.OrderBy(t => t.Title);
+                            break;
+                        case "Project": filteredTickets = filteredTickets.OrderBy(t => t.Project.Name);
+                            break;
+                        case "OwnerUser": filteredTickets = filteredTickets.OrderBy(t => t.OwnerUser.LastName);
+                            break;
+                        case "Created": filteredTickets = filteredTickets.OrderBy(t => t.CreateDate);
+                            break;
+                        case "AssignedToUser": filteredTickets = filteredTickets.OrderBy(t => t.AssignedToUser.LastName);
+                            break;
+                        case "Type": filteredTickets = filteredTickets.OrderBy(t => t.TicketType.Name);
+                            break;
+                        case "Priority": filteredTickets = filteredTickets.OrderBy(t => t.TicketPriority.Name);
+                            break;
+                        case "Status": filteredTickets = filteredTickets.OrderBy(t => t.TicketStatus.Name);
+                            break;
+                        case "Updated": filteredTickets = filteredTickets.OrderBy(t => t.UpdateDate);
+                            break;
+                    }
+                }
+            }
+            var result = filteredTickets.Skip(param.Start).Take(param.Length).ToList().Select(t => new TicketViewModel(t));
+            return Json( new DataTablesResponse(param.Draw, result, filteredTickets.Count(), db.Tickets.Count()), JsonRequestBehavior.AllowGet );
+        }
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

@@ -18,8 +18,6 @@
         @Html.HiddenFor(model => model.CreateDate)
         <div class="col-md-12">
             <div class="row">
-                @*<div class="col-md-4">*@
-                    @*<h2>@Html.DisplayFor(model => model.Title)</h2>*@
                     @Html.LabelFor(model => model.Title, "Title", htmlAttributes: new { @class = "control-label col-md-1" })
                     <div class="col-md-6">
                         @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control"} })
@@ -41,7 +39,17 @@
                 <div class="col-md-1">
                     @Html.DisplayFor(model => model.CreateDate)
                 </div> 
-             </div>             
+             </div> 
+            <div class="row">
+                @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-1" })
+            </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <textarea name="Description" autofocus>@Model.Description</textarea>
+                    @*@Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control"} })*@
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>            
             <div class="row">
                 @Html.LabelFor(model => model.ProjectId, "Project", htmlAttributes: new { @class = "control-label col-md-3" })
                 @Html.LabelFor(model => model.TicketStatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
@@ -72,16 +80,7 @@
                     @Html.ValidationMessageFor(model => model.AssignedToUserId, "", new { @class = "text-danger" })
                 </div>                
             </div>
-            <div class="row">
-                @Html.LabelFor(model => model.Description, "Description", htmlAttributes: new { @class = "control-label col-md-1" })
-            </div>
-            <div class="row">
-                <div class="col-md-10">
-                    <textarea name="Description" autofocus>@Model.Description</textarea>
-                    @*@Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control"} })*@
-                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
-                </div>
-            </div>
+            
         </div>       
     </div>
  

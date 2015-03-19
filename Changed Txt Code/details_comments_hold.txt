@@ -1,0 +1,51 @@
+<div class="row">
+        <div class="container">
+            <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    <h4>Comments</h4>
+                </div>
+                <div class="panel-title">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <h4>Date</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>By</h4>
+                        </div>
+                        <div class="col-md-2">
+                            <h4>Comment</h4>
+                        </div>
+                    </div>                    
+                </div>
+                <div class="panel-body">                
+                    @foreach (var c in Model.Comments.OrderByDescending(m => m.CreateDate))
+                    {
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-2">
+                                    @Html.DisplayFor(model => c.CreateDate)
+                                </div>
+                                <div class="col-md-2">
+                                    @{var userName = c.User.FirstName + ' ' + c.User.LastName;}
+                                    @Html.Raw(userName)
+                                </div>
+                                <div class="col-md-7">
+                                    @Html.DisplayFor(modelItem => c.Comment)
+                                </div>  
+                            </div>                                                     
+                        </div>
+                    }
+                </div>
+                <div class="panel-footer">
+                    <div class="well" style="width:1300px">
+                        <form action="@Url.Action("Comment")" method="post">
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("TicketId", Model.Id)
+                            <textarea name="Comment" autofocus style="height:100px; max-width:1250px; width:1200px"; placeholder="Add Comment"></textarea>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>

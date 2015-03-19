@@ -1,0 +1,4 @@
+<link href="/Content/jquery.dataTables.css" rel="stylesheet" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.js"></script>
+    <script src="/Scripts/jquery.dataTables.js"></script>

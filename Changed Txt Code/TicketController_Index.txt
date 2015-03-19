@@ -1,0 +1,5 @@
+ var db = new ApplicationDbContext();
+            var model = db.Tickets.ToList()
+                .Select(m => new TicketViewModel(m));
+
+            return View(model);      

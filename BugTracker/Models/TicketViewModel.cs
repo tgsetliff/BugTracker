@@ -9,39 +9,38 @@ namespace BugTracker.Models
 {
     public class TicketViewModel
     {
-        public int TicketId { get; set; }
-        public string TicketTitle { get; set; }
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset TicketCreated { get; set; }
-        public string TicketProject { get; set; }
-        public string TicketType { get; set; }
-        public string TicketStatus { get; set; }
-        public string TicketPriority { get; set; }
-        public string TicketOwnerUser { get; set; }
-        public string TicketAssignedToUser { get; set; }
-        [DisplayFormat(DataFormatString = "{0:MM/dd/yyyy}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset? TicketUpdated { get; set; }
+        public string Title { get; set; }
+        public string Created { get; set; }
+        public string Project { get; set; }
+        public string Type { get; set; }
+        public string Status { get; set; }
+        public string Priority { get; set; }
+        public string OwnerUser { get; set; }
+        public string AssignedToUser { get; set; }
+        public string Updated { get; set; }
 
       
         public TicketViewModel(Ticket ticket)
         {
-            this.TicketId = ticket.Id;
-            this.TicketTitle = ticket.Title;
-            this.TicketCreated = ticket.CreateDate;
-            this.TicketProject = ticket.Project.Name;
-            this.TicketType = ticket.TicketType.Name;
-            this.TicketStatus = ticket.TicketStatus.Name;
-            this.TicketPriority = ticket.TicketPriority.Name;            
-            this.TicketOwnerUser = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName;
+            this.Title = "<a href=\"/Tickets/Details/" + ticket.Id + "\">" + ticket.Title + "</a>";
+            this.Created = ticket.CreateDate.ToString("d");
+            this.Project = "<a href=\"/Projects/Details/" + ticket.Project.Id + "\">" + ticket.Project.Name + "</a>"; ;
+            this.Type = ticket.TicketType.Name;
+            this.Status = ticket.TicketStatus.Name;
+            this.Priority = ticket.TicketPriority.Name;            
+            this.OwnerUser = ticket.OwnerUser.FirstName + " " + ticket.OwnerUser.LastName;
             if(ticket.AssignedToUserId != null)
             {
-                this.TicketAssignedToUser = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
+                this.AssignedToUser = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName;
             }
             else
             {
-                this.TicketAssignedToUser = null;
+                this.AssignedToUser = null;
             }
-            this.TicketUpdated = ticket.UpdateDate;
+            if(ticket.UpdateDate != null)
+                this.Updated = ticket.UpdateDate.HasValue ? ticket.UpdateDate.Value.Month +"/" + ticket.UpdateDate.Value.Day + "/" + ticket.UpdateDate.Value.Year : null; ;
+
+            
         }
     }
 }

@@ -12,9 +12,16 @@
         <div class="text-center">
             <h1>Projects</h1>            
         </div>
-        <p>
-            @Html.ActionLink("Create New", "Create")
-        </p>
+        @if (User.IsInRole("Admin") || User.IsInRole("PM"))
+        {
+            <div class="body-content">
+                <ul class="btn btn-success">
+                    <li><a href="@Url.Action("Create", "Projects")">Create</a></li>
+                </ul>
+            </div>
+            <br />
+        }
+        
     </div>
     <div class="row">
     @{
@@ -40,8 +47,9 @@
                         <div class="pull-right">@item.OtherTickets</div>
                         <hr />
                         <div class="pull-right">
-                            <a href="@Url.Action("Details", new { Id = item.ProjectId })" class="btn btn-link">Details</a>
-                            <a href="@Url.Action("Edit", new { Id = item.ProjectId })" class="btn btn-link">Edit</a>
+                                <a href="@Url.Action("Details", new { Id = item.ProjectId })" class="btn btn-primary btn-xs">Details</a>
+                                @if (User.IsInRole("Admin") || User.IsInRole("PM"))
+                                {<a href="@Url.Action("Edit", new { Id = item.ProjectId })" class="btn btn-primary btn-xs">Edit</a>}                           
                         </div>
                         
                     </div>
