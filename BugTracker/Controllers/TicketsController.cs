@@ -46,7 +46,6 @@ namespace BugTracker.Controllers
         // GET: Tickets/Create
         public ActionResult Create()
         {
-       
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
@@ -93,7 +92,8 @@ namespace BugTracker.Controllers
  
             TempData["Ticket"] = ticket;
 
-            ViewBag.AssignedToUserId = new SelectList(db.Users, "Id", "FirstName", ticket.AssignedToUserId);
+            var projectUsers = db.Project.Single(p => p.Id == ticket.ProjectId).AssignedUsers;
+            ViewBag.AssignedToUserId = new SelectList(projectUsers, "Id", "UserName", ticket.AssignedToUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
@@ -115,7 +115,6 @@ namespace BugTracker.Controllers
                 { 
                     Ticket getTicketHistory = (Ticket)TempData["Ticket"];
                     var userId = User.Identity.GetUserId();
-                    var assignedUser = db.Users.FirstOrDefault(u => u.Id == ticket.AssignedToUserId).Email;
 
                     // check description
                     if(getTicketHistory.Description != ticket.Description)
@@ -206,22 +205,44 @@ namespace BugTracker.Controllers
                     // check assigned to user, if changed, notify new asignee
                     if (getTicketHistory.AssignedToUserId != ticket.AssignedToUserId)
                     {
-                        // update history
-                        db.TicketHistories.Add(new TicketHistory
+                        // if first assignment, outbput blank to oldvalue
+                        if(getTicketHistory.AssignedToUserId == null)
                         {
-                            ChangeDate = DateTimeOffset.UtcNow,
-                            Property = "Assigned To",
-                            OldValue = getTicketHistory.AssignedToUser.FirstName + " " + getTicketHistory.AssignedToUser.LastName,
-                            NewValue = ticket.AssignedToUser.FirstName + " " + ticket.AssignedToUser.LastName,
-                            TicketId = ticket.Id,
-                            UserId = userId
-                        });
+                            // update history
+                            db.TicketHistories.Add(new TicketHistory
+                            {
+                                ChangeDate = DateTimeOffset.UtcNow,
+                                Property = "Assigned To",
+                                OldValue = "",
+                                NewValue = db.Users.Single(u=> u.Id == ticket.AssignedToUserId).FirstName + " " +  db.Users.Single(u=> u.Id == ticket.AssignedToUserId).LastName,
+                                TicketId = ticket.Id,
+                                UserId = userId
+                            });
+                        }
+                        else
+                        {
+                            // update history
+                            db.TicketHistories.Add(new TicketHistory
+                            {
+                                ChangeDate = DateTimeOffset.UtcNow,
+                                Property = "Assigned To",
+                                OldValue = getTicketHistory.AssignedToUser.FirstName + " " + getTicketHistory.AssignedToUser.LastName,
+                                NewValue = db.Users.Single(u => u.Id == ticket.AssignedToUserId).FirstName + " " + db.Users.Single(u => u.Id == ticket.AssignedToUserId).LastName,
+                                TicketId = ticket.Id,
+                                UserId = userId
+                            });
+                        }
+                    }
+                    
+                    var MyAddress = ConfigurationManager.AppSettings["ContactEmail"];
+                    var MyUsername = ConfigurationManager.AppSettings["Username"];
+                    var MyPassword = ConfigurationManager.AppSettings["Password"];
+                    var link = HttpContext.Request.Url.Scheme + "://" + HttpContext.Request.Url.Authority + Url.Action("Details", "Tickets", new { id = ticket.Id });
 
-                        var MyAddress = ConfigurationManager.AppSettings["ContactEmail"];
-                        var MyUsername = ConfigurationManager.AppSettings["Username"];
-                        var MyPassword = ConfigurationManager.AppSettings["Password"];
-                        var link = HttpContext.Request.Url.Scheme + "://" + HttpContext.Request.Url.Authority + Url.Action("Details", "Tickets", new { id = ticket.Id });
-
+                    // if assigned to user has changed, send email to new asignee
+                    if (ticket.AssignedToUserId != null && ticket.AssignedToUserId != getTicketHistory.AssignedToUserId)
+                    {
+                        var assignedUser = db.Users.FirstOrDefault(u => u.Id == ticket.AssignedToUserId).Email;                        
                         SendGridMessage mail = new SendGridMessage();
                         mail.From = new MailAddress("noreply@bugtracker.com");
                         mail.AddTo(assignedUser);
@@ -234,13 +255,26 @@ namespace BugTracker.Controllers
                         db.TicketNotifications.Add(new TicketNotification
                         {
                             TicketId = ticket.Id,
-                            UserId = userId
+                            UserId = ticket.AssignedToUserId
                         });
                     }
-                }               
+
+                    // check if ticket status is resolved, send email to ticket owner 
+                    if(db.TicketStatuses.Single(p => p.Id == ticket.TicketStatusId).Name =="Resolved")
+                    {
+                        var ownerUser = db.Users.Single(u => u.Id == getTicketHistory.OwnerUserId).Email;
+                        SendGridMessage mail = new SendGridMessage();
+                        mail.From = new MailAddress("noreply@bugtracker.com");
+                        mail.AddTo(ownerUser);
+                        mail.Subject = "Your ticket has been resolved: " + ticket.Title;
+                        mail.Text = "The ticket you created has been Resolved. You can review by the following link.  " + link;
+                        var credentials = new NetworkCredential(MyUsername, MyPassword);
+                        var transportWeb = new Web(credentials);
+                        transportWeb.Deliver(mail);
+                    }
+                }       // tempdata != null               
 
                 ticket.UpdateDate = DateTimeOffset.UtcNow;
-                //ticket.AssignedToUserId = User.Identity.GetUserId();
 
                 db.Entry(ticket).State = EntityState.Modified;
                 db.Entry(ticket).Property(p => p.OwnerUserId).IsModified = false;
@@ -381,7 +415,7 @@ namespace BugTracker.Controllers
 
             var user = db.Users.Single(u=> u.UserName == User.Identity.Name);
             var userId = User.Identity.GetUserId();
-                
+              
                 // pm and developer sees tickets they own or are assigned to
                 if (User.IsInRole("PM"))
                     filteredTickets = user.Projects.SelectMany(t=> t.Tickets).AsQueryable();
@@ -389,7 +423,7 @@ namespace BugTracker.Controllers
                     filteredTickets = filteredTickets.Where(t => t.AssignedToUserId == userId);
                 else if (User.IsInRole("Submitter"))
                     filteredTickets = filteredTickets.Where(t => t.OwnerUserId == userId);
-          
+
             var search = param.Search.Value;
             if (!string.IsNullOrEmpty(search))
             {

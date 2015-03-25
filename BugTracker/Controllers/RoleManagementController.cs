@@ -38,9 +38,8 @@ namespace BugTracker.Controllers
         public ActionResult ListRoles()
         {
             var db = new ApplicationDbContext();
-            var model = db.Roles
-                          .Select(m => new RoleViewModel() { RoleId = m.Id, RoleName = m.Name })
-                          .ToList();
+            var model = db.Roles.ToList()
+                .Select(m => new UserRoleViewModel() { RoleId = m.Id, RoleName = m.Name, Users = new MultiSelectList(db.Users.Where(u => u.Roles.Any(r => r.RoleId == m.Id)), "Id", "UserName") });
 
             return View(model);
         }

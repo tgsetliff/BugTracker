@@ -4,48 +4,25 @@
     ViewBag.Title = "Project Details";
 }
 
-<div class="container">
-    <h2>Project</h2>
-    <hr />
-    @using (Html.BeginForm("Details", "Projects", FormMethod.Post,
-    new { encType = "multipart/form-data", name = "myform" }))
-    {
-        @Html.AntiForgeryToken()
-
-        <div class="form-horizontal">
-
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-            @Html.HiddenFor(model => model.ProjectId)
-            <div class="form-group">
-                @Html.LabelFor(model => model.ProjectName, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.EditorFor(model => model.ProjectName, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
-                    @Html.ValidationMessageFor(model => model.ProjectName, "", new { @class = "text-danger" })
+<div class="container" style="margin-top:100px;">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        @Html.DisplayFor(model => model.ProjectName)
+                    </div>
+                    <div class="panel-body">
+                        @Html.ListBoxFor(model => model.AssignedUsers, Model.AssignedUsers as MultiSelectList, new { htmlAttributes = new { @class = "form-control" }, disabled = "disabled" })
+                    </div>
+                    <div class="panel-footer">
+                        @if (User.IsInRole("Admin") || User.IsInRole("PM"))
+                        {<a href="@Url.Action("Edit", new { Id = Model.ProjectId })" class="btn btn-primary btn-md">Edit</a>}
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.AssignedUsers, htmlAttributes: new { @class = "control-label col-md-2" })
-                <div class="col-md-10">
-                    @Html.ListBoxFor(model => model.AssignedUsers, Model.AssignedUsers as MultiSelectList, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.AssignedUsers, "", new { @class = "text-danger" })
-                    @if (ViewBag.Message != null)
-                    {
-                        <br />
-                        <div class="text-danger">@ViewBag.Message</div>
-                    }
-                </div>
-            </div>
-            @*<div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Add User(s)" class="btn btn-default" />
-                </div>
-            </div>*@
         </div>
-    }
-
-    <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.ProjectId }) |
-        @Html.ActionLink("Back to List", "Index")
-    </p>
+    </div>
 </div>
 

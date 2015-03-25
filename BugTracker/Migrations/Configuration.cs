@@ -66,18 +66,6 @@ namespace BugTracker.Migrations
               },
               new TicketStatus
               {
-                  Name = "Testing"
-              },
-              new TicketStatus
-              {
-                  Name = "Submitter Approved"
-              },
-              new TicketStatus
-              {
-                  Name = "PM Approved"
-              },
-              new TicketStatus
-              {
                   Name = "Resolved"
               }
               );

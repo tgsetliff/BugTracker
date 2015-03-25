@@ -40,7 +40,8 @@
         </div>
     }
     <div>
-        @Html.ActionLink("Back to List", "ListRoles", "RoleManagement")
+        @*@Html.ActionLink("Back to List", "ListRoles", "RoleManagement")*@
+        <a href="@Url.Action("ListRoles")" class="btn btn-primary btn-md">Back</a>
     </div>
 
     @section Scripts {

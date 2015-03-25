@@ -117,7 +117,7 @@ textarea {
   margin: 0;
   font: inherit;
   color: #337ab7;
-  background-color:#ddd;
+  background-color:#F0F0F0;
 }
 button {
   overflow: visible;
@@ -5323,7 +5323,7 @@ a.list-group-item-danger.active:focus {
 .panel-footer {
   padding: 10px 15px;
   background-color: #f5f5f5;
-  border-top: 1px solid #ddd;
+  /*border-top: 1px solid #ddd;*/
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
 }

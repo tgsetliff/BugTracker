@@ -165,9 +165,9 @@ namespace BugTracker.Controllers
                     foreach(string userid in model.UsersIn)
                     {
                         // need to remove users from the Project Users table here
-                        var tempUser = new ApplicationUser { Id = userid };
-                        db.Users.Attach(tempUser);
-                        project.AssignedUsers.Add(tempUser);
+                        var removeUser = new ApplicationUser { Id = userid };
+                        db.Users.Attach(removeUser);
+                        project.AssignedUsers.Add(removeUser);
                     }
                 }
                 if (model.UsersOut != null)
@@ -175,9 +175,9 @@ namespace BugTracker.Controllers
                     // process UsersOut and add selsected
                     foreach (string userid in model.UsersOut)
                     {
-                        var tempUser = new ApplicationUser { Id = userid };
-                        db.Users.Attach(tempUser);
-                        project.AssignedUsers.Remove(tempUser);
+                        var addUser = new ApplicationUser { Id = userid };
+                        db.Users.Attach(addUser);
+                        project.AssignedUsers.Remove(addUser);
                     }
                 }
                 
@@ -185,7 +185,7 @@ namespace BugTracker.Controllers
 
                 project.Name = model.ProjectName;
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit", project.Id);
 
             }
             // if we get to this point, there's a problem - return the view with the model

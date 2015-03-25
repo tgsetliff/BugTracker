@@ -42,13 +42,21 @@
                         <input type="submit" value="Log in" class="btn btn-default" />
                     </div>
                 </div>
-                <p>
+                <div class="row">
+                    <br />
+                    <a href="@Url.Action("Register")" class="btn btn-primary btn-md">Register as a New User</a>
+                </div>
+                <div class="row">
+                    <br />
+                    <a href="@Url.Action("Forgot Password")" class="btn btn-primary btn-md">Forgot your Password?</a>
+                </div>
+                @*<p>
                     @Html.ActionLink("Register as a new user", "Register")
                 </p>
                  //Enable this once you have account confirmation enabled for password reset functionality
                     <p>
                         @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                    </p>
+                    </p>*@
             }
         </section>
     </div>

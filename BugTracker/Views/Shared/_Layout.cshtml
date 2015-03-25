@@ -19,7 +19,7 @@
     <link href="/Content/local.css" rel="stylesheet" />
 </head>
 <body>   
-    <div class="wrapper">
+    <div id="wrap">
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -31,15 +31,15 @@
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul id="active" class="nav navbar-nav side-nav">
-                    <li @if (ViewBag.Title.Contains("Home")) { <text> class="selected" </text>   }><a href="/Home/Index"> Home</a></li>
-                    <li @if (ViewBag.Title.Contains("Project")) { <text> class="selected" </text>  }><a href="/Projects/Index"> Projects</a></li>
-                    <li @if (ViewBag.Title.Contains("Ticket")) { <text> class="selected" </text>   }><a href="/Tickets/Index"> Tickets</a></li>
+                    <li @if (ViewBag.Title.Contains("Home")) { <text> class="selected" </text>    }><a href="/Home/Index"> Home</a></li>
+                    <li @if (ViewBag.Title.Contains("Project")) { <text> class="selected" </text>   }><a href="/Projects/Index"> Projects</a></li>
+                    <li @if (ViewBag.Title.Contains("Ticket")) { <text> class="selected" </text>    }><a href="/Tickets/Index"> Tickets</a></li>
                     <li class="divider"></li>
                     @if (User.IsInRole("Admin"))
                     {
-                        <li @if (ViewBag.Title.Contains("Role")) { <text> class="selected" </text>    }><a href="/RoleManagement/ListRoles"> Roles</a></li>
+                        <li @if (ViewBag.Title.Contains("Role")) { <text> class="selected" </text>     }><a href="/RoleManagement/ListRoles"> Roles</a></li>
                     }
-                    
+
                     @if (!User.Identity.IsAuthenticated)
                     {
                         <li><a href="Account/Register">Register</a></li>
@@ -69,23 +69,16 @@
         </nav>
         <div id="page-wrapper">
             @RenderBody()
-            
-        </div>        
-        <footer>
+
+        </div>
+    </div>    
+        <footer class="footer">
             <div class="container">
-                <div class="col-md-12">
-                    <div class="col-md-2"></div>
-                    <div class="col-md-10">
-                        <hr />
-                        <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
-                    </div>
-                </div>
-            </div>            
+                <p>&copy; @DateTime.Now.Year - Bug Tracker</p>
+            </div>
         </footer>
-
         
-    </div>
-
+    
 
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

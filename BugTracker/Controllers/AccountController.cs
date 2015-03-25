@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using BugTracker.Models;
+using System.Web.Security;
 
 namespace BugTracker.Controllers
 {
@@ -79,7 +80,8 @@ namespace BugTracker.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    //return RedirectToLocal(returnUrl);
+                    return RedirectToAction("Index", "Tickets");
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -155,7 +157,6 @@ namespace BugTracker.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
@@ -163,7 +164,12 @@ namespace BugTracker.Controllers
                     var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
-                    return RedirectToAction("Index", "Home");
+                    // assign new user to Submitter role
+                    //Roles.AddUserToRole(userName, "Submitter"); this didnt work, error said Role Manager feature has not been enabled   setliff 20150322
+                    UserManager.AddToRole(user.Id, "Submitter");   // this assigned to role but did not recognize user being in role when loading tickets   setliff 20150322
+
+                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    return RedirectToAction("Index", "Tickets");  
                 }
                 AddErrors(result);
             }

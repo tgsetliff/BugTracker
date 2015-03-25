@@ -12,9 +12,7 @@
                 <div class="panel-body">
                     <div class="media">
                         <div class="media-body">
-                            <ol class="btn btn-primary pull-right">
-                                <li><a href="@Url.Action("Edit", "Tickets", new { id = Model.Id })">Edit</a></li>
-                            </ol>
+                            <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Tickets", new { id = Model.Id })">Edit</a>
                             <h3 class="media-heading">@Html.DisplayFor(model => model.Title)</h3>
                             <h5>
                                 @{var ownerName = Model.OwnerUser.FirstName + ' ' + Model.OwnerUser.LastName;}
@@ -54,7 +52,8 @@
                         }
                         else
                         {
-                            @Html.DisplayFor(model => model.AssignedToUser.FirstName)
+                            @*@Html.DisplayFor(model => model.AssignedToUser.FirstName)*@
+                            @("-- Unassigned --")
                         }
                     </div>
                 </div>
@@ -282,15 +281,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>                
+            </div> 
+            <div class="col-md-1">
+                <div class="row">
+                    <br />
+                    <a class="btn btn-primary btn-md" href="@Url.Action("Index")">Back</a>
+                </div> 
             </div>
+                      
         </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <br />
-        @Html.ActionLink("Back to List", "Index")
     </div>
 </div>
 

@@ -43,9 +43,9 @@
         </div>
     }
 
-    <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.ProjectId }) |
-        @Html.ActionLink("Back to List", "Index")
-    </p>
+    <div>
+        @if (User.IsInRole("Admin") || User.IsInRole("PM"))
+        {<a href="@Url.Action("Edit", new { Id = Model.ProjectId })" class="btn btn-primary btn-xs">Edit</a>}       
+    </div>
 </div>
 
