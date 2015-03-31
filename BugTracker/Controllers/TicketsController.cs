@@ -495,6 +495,25 @@ namespace BugTracker.Controllers
             return Json( new DataTablesResponse(param.Draw, result, filteredTickets.Count(), db.Tickets.Count()), JsonRequestBehavior.AllowGet );
         }
 
+        // show dashboard
+        public ActionResult Dashboard()
+        {
+            IEnumerable<Ticket> dashboardTickets = db.Tickets.AsQueryable();
+
+            var user = db.Users.Single(u => u.UserName == User.Identity.Name);
+            var userId = User.Identity.GetUserId();
+
+            // pm and developer sees tickets they own or are assigned to
+            if (User.IsInRole("PM"))
+                dashboardTickets = user.Projects.SelectMany(t => t.Tickets).AsQueryable();
+            else if (User.IsInRole("Developer"))
+                dashboardTickets = dashboardTickets.Where(t => t.AssignedToUserId == userId);
+            else if (User.IsInRole("Submitter"))
+                dashboardTickets = dashboardTickets.Where(t => t.OwnerUserId == userId);
+
+            var result = dashboardTickets.ToList().Select(t => new DashboardViewModel(t)).OrderByDescending(t=>t.Created);
+            return View(result);
+        }
 
         protected override void Dispose(bool disposing)
         {

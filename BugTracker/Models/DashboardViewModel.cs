@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using Microsoft.AspNet.Identity;
 
 namespace BugTracker.Models
 {
-    public class TicketViewModel
+    public class DashboardViewModel
     {
         public string Title { get; set; }
         public string Created { get; set; }
@@ -19,11 +17,11 @@ namespace BugTracker.Models
         public string AssignedToUser { get; set; }
         public string Updated { get; set; }
       
-        public TicketViewModel(Ticket ticket)
+        public DashboardViewModel(Ticket ticket)
         {
-            this.Title = "<a href=\"/Tickets/Details/" + ticket.Id + "\">" + ticket.Title + "</a>";
+            this.Title = ticket.Title;
             this.Created = ticket.CreateDate.ToString("d");
-            this.Project = "<a href=\"/Projects/Details/" + ticket.Project.Id + "\">" + ticket.Project.Name + "</a>"; ;
+            this.Project = ticket.Project.Name;
             this.Type = ticket.TicketType.Name;
             this.Status = ticket.TicketStatus.Name;
             this.Priority = ticket.TicketPriority.Name;            

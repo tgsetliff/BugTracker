@@ -7,7 +7,7 @@
     ViewBag.Title = "Ticket Index";
 }
 
-<div class="container-fluid"
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
             <div class="col-md-5"></div>
@@ -20,42 +20,44 @@
             </div>               
         </div> 
         <div class="row"><p></p></div>
-        <table class="table table-hover table-striped table-responsive" id="TicketDataTable" data-order='[[ 3, "desc"]]'>
-            <thead>
-                <tr>
-                    <th>
-                        <label>Title</label>
-                    </th>
-                    <th>
-                        <label>Project</label>
-                    </th>
-                    <th>
-                        <label>Created By</label>
-                    </th>
-                    <th>
-                        <label>Create Date</label>
-                    </th>
-                    <th>
-                        <label>Assigned To</label>
-                    </th>
-                    <th>
-                        <label>Type</label>
-                    </th>
-                    <th>
-                        <label>Priority</label>
-                    </th>
-                    <th>
-                        <label>Status</label>
-                    </th>
-                    <th>
-                        <label>Last Updated</label>
-                    </th>
+        <div class="row">
+            <table class="table table-hover table-striped table-responsive" id="TicketDataTable" data-order='[[ 3, "desc"]]'>
+                <thead>
+                    <tr>
+                        <th>
+                            <label>Title</label>
+                        </th>
+                        <th>
+                            <label>Project</label>
+                        </th>
+                        <th>
+                            <label>Created By</label>
+                        </th>
+                        <th>
+                            <label>Create Date</label>
+                        </th>
+                        <th>
+                            <label>Assigned To</label>
+                        </th>
+                        <th>
+                            <label>Type</label>
+                        </th>
+                        <th>
+                            <label>Priority</label>
+                        </th>
+                        <th>
+                            <label>Status</label>
+                        </th>
+                        <th>
+                            <label>Last Updated</label>
+                        </th>
 
-                </tr>
-            </thead>
+                    </tr>
+                </thead>
 
-            <tbody></tbody>
-        </table>
+                <tbody></tbody>
+            </table>
+        </div>
     </div> 
 </div>
 @section scripts {

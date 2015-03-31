@@ -1,30 +1,41 @@
 ﻿@using BugTracker.Models;
 @using Microsoft.AspNet.Identity;
 
-@model IEnumerable<RoleViewModel>
+@model IEnumerable<UserRoleViewModel>
 @{
     ViewBag.Title = "ListRoles";
 }
 
 <div class="container">
-
-    <div class="col-lg-12">
-        <div class="col-lg-6">
-            <h2>ROLES</h2>
+    <div class="row">
+        <div class="text-center">
+            <h1>Roles</h1>
         </div>
-    </div>
-    <table class="table">
+
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RoleName)
-                </td>
-                <td>
-                    @Html.ActionLink("Assign", "AssignUserRole", new { rolename = item.RoleName }) |
-                    @Html.ActionLink("Unassign", "UnassignUserRole", new { roleid = item.RoleId })
-                </td>
-            </tr>
+            <div class="col-md-3">
+                <div class="panel panel-info">
+                    <div class="panel-heading text-center">
+                        <span style="font-size:18px;">@item.RoleName</span>
+                    </div>
+                    <div class="panel-body">
+                        <label>Assigned Users</label>
+                        <div class="row">
+                            
+                            @Html.ListBox("Users", item.Users, new { htmlAttributes = new { disabled = "disabled" } })
+                        </div>                        
+                        <div class="panel-footer">
+                            <div class="row">
+                                <a href="@Url.Action("AssignUserRole", new { rolename = item.RoleName })" class="btn btn-primary btn-md">Assign</a>
+                                <a href="@Url.Action("UnassignUserRole", new { roleid = item.RoleId })" class="btn btn-primary btn-md">Unassign</a>
+                            </div>
+                            
+                        </div>
+
+                    </div>
+                </div>
+            </div>
         }
-    </table>
+    </div>
 </div>

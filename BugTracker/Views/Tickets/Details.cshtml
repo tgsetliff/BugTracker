@@ -10,8 +10,8 @@
         <div class="col-md-12">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <div class="media">
-                        <div class="media-body">
+                    @*<div class="media">
+                        <div class="media-body">*@
                             <a class="btn btn-primary pull-right" href="@Url.Action("Edit", "Tickets", new { id = Model.Id })">Edit</a>
                             <h3 class="media-heading">@Html.DisplayFor(model => model.Title)</h3>
                             <h5>
@@ -22,15 +22,15 @@
                             <div class="feed-item-body">
                                 <h4>@Html.DisplayFor(model => model.Description)</h4>
                             </div>
-                        </div>
-                    </div>
+                        @*</div>
+                    </div>*@
                 </div>
-                <div class="panel panel-body">
+                <div class="panel-body">
                     @Html.LabelFor(model => model.ProjectId, "Project", htmlAttributes: new { @class = "control-label col-md-3" })
                     @Html.LabelFor(model => model.TicketStatusId, "Status", htmlAttributes: new { @class = "control-label col-md-2" })
                     @Html.LabelFor(model => model.TicketPriorityId, "Priority", htmlAttributes: new { @class = "control-label col-md-2" })
                     @Html.LabelFor(model => model.TicketTypeId, "Ticket Type", htmlAttributes: new { @class = "control-label col-md-2" })
-                    @Html.LabelFor(model => model.AssignedToUserId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-2" })
+                    @Html.LabelFor(model => model.AssignedToUserId, "Assigned To", htmlAttributes: new { @class = "control-label col-md-3" })
                     <div class="col-md-3">
                         @Html.DisplayFor(model => model.Project.Name)
                     </div>

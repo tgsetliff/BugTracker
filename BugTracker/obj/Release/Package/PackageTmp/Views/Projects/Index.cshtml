@@ -29,7 +29,7 @@
             <div class="col-md-3">
                 <div class="panel panel-info">
                     <div class="panel-heading text-center">
-                        <h4>@item.ProjectName</h4>                    
+                        <span style="font-size:18px;">@item.ProjectName</span>                    
                     </div>
                     <div class="panel-body">
                         <label>Tickets: </label> 
@@ -45,9 +45,9 @@
                         <div class="pull-right">@item.OtherTickets</div>
                         <hr />
                         <div class="pull-right">
-                                <a href="@Url.Action("Details", new { Id = item.ProjectId })" class="btn btn-primary btn-xs">Details</a>
+                                <a href="@Url.Action("Details", new { Id = item.ProjectId })" class="btn btn-primary btn-md">Details</a>
                                 @if (User.IsInRole("Admin") || User.IsInRole("PM"))
-                                {<a href="@Url.Action("Edit", new { Id = item.ProjectId })" class="btn btn-primary btn-xs">Edit</a>}                           
+                                {<a href="@Url.Action("Edit", new { Id = item.ProjectId })" class="btn btn-primary btn-md">Edit</a>}                           
                         </div>
                         
                     </div>
