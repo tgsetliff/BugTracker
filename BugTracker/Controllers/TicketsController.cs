@@ -20,8 +20,6 @@ namespace BugTracker.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        //public ApplicationDbContext Ticket = new ApplicationDbContext();
-
         // GET: Tickets
         public ActionResult Index()
         {
@@ -35,6 +33,8 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            // find requested ticket
             Ticket ticket = db.Tickets.Find(id);
             if (ticket == null)
             {
@@ -46,6 +46,7 @@ namespace BugTracker.Controllers
         // GET: Tickets/Create
         public ActionResult Create()
         {
+            // setup select lists
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name");
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name");
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name");
@@ -62,6 +63,7 @@ namespace BugTracker.Controllers
         {
             if (ModelState.IsValid)
             {
+                // create new ticket
                 ticket.CreateDate = DateTimeOffset.UtcNow;
                 ticket.OwnerUserId = User.Identity.GetUserId();
                 
@@ -70,6 +72,7 @@ namespace BugTracker.Controllers
                 return RedirectToAction("Index");
             }
 
+            // set up select lists
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", ticket.ProjectId);
             ViewBag.TicketPriorityId = new SelectList(db.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
             ViewBag.TicketStatusId = new SelectList(db.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
@@ -90,8 +93,10 @@ namespace BugTracker.Controllers
                 return HttpNotFound();
             }
  
+            // set up tempdata for ticket changes for historical tracking
             TempData["Ticket"] = ticket;
 
+            // get list of users assigned to project and set up select list
             var projectUsers = db.Project.Single(p => p.Id == ticket.ProjectId).AssignedUsers;
             ViewBag.AssignedToUserId = new SelectList(projectUsers, "Id", "UserName", ticket.AssignedToUserId);
             ViewBag.ProjectId = new SelectList(db.Project, "Id", "Name", ticket.ProjectId);
@@ -234,6 +239,7 @@ namespace BugTracker.Controllers
                         }
                     }
                     
+                    // if assignedto has changes, need to notify new assigned to person by email
                     var MyAddress = ConfigurationManager.AppSettings["ContactEmail"];
                     var MyUsername = ConfigurationManager.AppSettings["Username"];
                     var MyPassword = ConfigurationManager.AppSettings["Password"];
@@ -250,7 +256,7 @@ namespace BugTracker.Controllers
                         mail.Text = "You have been assigned a new Ticket. Please review at your earliest opportunity.  " + link;
                         var credentials = new NetworkCredential(MyUsername, MyPassword);
                         var transportWeb = new Web(credentials);
-                        transportWeb.Deliver(mail);
+                        transportWeb.DeliverAsync(mail);
 
                         db.TicketNotifications.Add(new TicketNotification
                         {
@@ -362,6 +368,7 @@ namespace BugTracker.Controllers
                 ticketAttachment.CreateDate = DateTimeOffset.UtcNow;
                 ticketAttachment.UserId = User.Identity.GetUserId();
 
+                // determine if file is being added
                 if (file != null)
                 {
                     if (file.ContentLength > 0)

@@ -18,6 +18,7 @@ namespace BugTracker.Controllers
         // GET: Projects
         public ActionResult Index()
         {
+            // Get list of projects with ticket count breakdown of open, closed and other
             var db = new ApplicationDbContext();
             var model = db.Project.ToList()
                 .Select(m => new ProjectViewModel(m));
@@ -32,12 +33,15 @@ namespace BugTracker.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            // get selected project
             Project project = db.Project.Find(id);
             if (project == null)
             {
                 return HttpNotFound();
             }
-            //return View(project);
+
+            // build list of users
             var model = db.Project
                 .Where(m => m.Id == id)
                 .Select(m => new ProjectUserViewModel { ProjectId = m.Id, ProjectName = m.Name })
@@ -89,7 +93,6 @@ namespace BugTracker.Controllers
                 {
                     foreach (string userid in model.UsersIn)
                     {
-                        // need to remove users from the Project Users table here
                         var tempUser = new ApplicationUser { Id = userid };
                         db.Users.Attach(tempUser);
                         project.AssignedUsers.Add(tempUser);
@@ -164,7 +167,7 @@ namespace BugTracker.Controllers
                 {
                     foreach(string userid in model.UsersIn)
                     {
-                        // need to remove users from the Project Users table here
+                        // add users to project
                         var removeUser = new ApplicationUser { Id = userid };
                         db.Users.Attach(removeUser);
                         project.AssignedUsers.Add(removeUser);
@@ -175,6 +178,7 @@ namespace BugTracker.Controllers
                     // process UsersOut and add selsected
                     foreach (string userid in model.UsersOut)
                     {
+                        // remove user from project
                         var addUser = new ApplicationUser { Id = userid };
                         db.Users.Attach(addUser);
                         project.AssignedUsers.Remove(addUser);
